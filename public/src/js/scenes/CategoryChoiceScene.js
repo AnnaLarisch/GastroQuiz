@@ -90,7 +90,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
             category2Button.on('pointerup', function (pointer){
                 console.log("Category 2!")
                 chosenCategory= categoryNameList[1]
-                setAndClearButtonColor(2);
+                setAndClearButtonColor(2); 
             });
             category3Button.on('pointerup', function (pointer){
                 console.log("Category 3!")
