@@ -1,0 +1,29 @@
+html {
+    font-size: 10px;
+  }
+
+#startbutton {
+    font-size: 4rem;
+    font-weight: bold;
+    color: rgb(9, 1, 135);
+    width: 200px;
+    text-align: center;
+    border: 4px solid rgb(9, 1, 135);
+    border-radius: 18px;
+}
+#quitbutton {
+    font-size: 2rem;
+}
+
+
+
+
+#title-gastro-quiz {
+    font-size: 6rem;
+    font-family: Helvetica, Arial, sans-serif;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    text-align: center;
+    margin-left: 2%;
+    margin-top: 2%;
+}
