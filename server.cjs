@@ -51,8 +51,10 @@ io.on('connection', function (socket) {
     console.log('User with PlayerID: ', playerList[playerCountOverall].playerID, ' and with SocketID: ', playerList[playerCountOverall].socketID, ' has connected!\n');
     playerCountOverall ++;
     playerCountCurrent ++;
-    if (playerCountOverall <= playerCountMax){
+    if (playerCountOverall <= 2){
       socket.join('game');
+ 
+      
     }
     else{
       gameFull = true;
@@ -89,33 +91,57 @@ io.on('connection', function (socket) {
 
   });
 
-  socket.on('setPlayerReady', function (isHost, isGuest){
-    if (isHost && !isGuest){
-      hostIsReady = true;
+  socket.on('setPlayerReady', function (isReady){
+    if (isReady){
+      playerCountReady ++;
+    } else if (!isReady){
+      playerCountReady --;
     }
-    if (!isHost && isGuest){
-      guestIsReady = true;
-    }
-    if (hostIsReady && guestIsReady){
+    if (playerCountReady == playerCountCurrent && playerCountReady <= playerCountMax){
+      var player1 = playerList[0]
+      var player2 = playerList[1]
+      io.in('game').emit('setSockeId', player1.socketID, player2.socketID);
       io.in('game').emit('startGame');
     }
   });
 
-  socket.on('tellCategoriesServer', function(categoriesList){
-    io.in('game').emit('tellCategoriesGame', categoriesList);
+  socket.on('tellCategoriesServer', function(categoriesList, category1, category2, category3){
+    io.in('game').emit('tellCategoriesGame', categoriesList, category1, category2, category3);
   });
 
   socket.on('tellQuestionServer', function(currentQuestion, correct_answer, currentAnswers, shuffleAnswers){
     io.in('game').emit('tellQuestionGame', currentQuestion, correct_answer, currentAnswers, shuffleAnswers);
   });
-  socket.on('launchQuestionSceneServer', function(){
-    io.in('game').emit('launchQuestionSceneGame');
+
+  socket.on('increaseScoreHostServer', function(opponentId, score){
+    io.to(opponentId).emit('increaseScoreHostGame', score);
   });
-  socket.on('increaseScoreServer', function(hostScored, guestScored){
-    io.in('game').emit('increaseScoreGame', hostScored, guestScored);
+  socket.on('increaseScoreGuestServer', function(opponentId, score){
+    io.to(opponentId).emit('increaseScoreGuestGame', score);
+  });
+  socket.on('colourCategoryServer', function(chosenCategoryNumber){
+    io.in('game').emit('colourCategoryGame', chosenCategoryNumber);
+  });
+  socket.on('chooseCategoryCallServer', function(categoryName, setId, clearId1, clearId2){
+    io.in('game').emit('chooseCategoryCallGame', categoryName, setId, clearId1, clearId2);
+  });
+  socket.on('moveProgressBarServer', function(width){
+    io.in('game').emit('moveProgressBarGame', width);
+  });
+  socket.on('endGameSceneServer', function(){
+    io.in('game').emit('endGameSceneGame');
   });
   
-
+  socket.on('restartQuestionServer', function(){
+    io.emit('restartQuestionGame');
+  });
+  socket.on('resetSceneServer', function(){
+    io.in('game').emit('resetSceneGame');
+  });
+  
+  socket.on('backToCategoryServer', function(){
+    io.in('game').emit('backToCategoryGame');
+  });
 });
 
 

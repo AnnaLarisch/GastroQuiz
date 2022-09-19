@@ -7,9 +7,11 @@ html {
     font-weight: bold;
     color: rgb(9, 1, 135);
     width: 200px;
+    height: 100px;
     text-align: center;
     border: 4px solid rgb(9, 1, 135);
     border-radius: 18px;
+    pointer-events: none;
 }
 #quitbutton {
     font-size: 2rem;

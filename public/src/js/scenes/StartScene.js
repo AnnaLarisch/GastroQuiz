@@ -9,6 +9,7 @@ var self;
 var startbutton;
 var quitbutton;
 var currentConnectedPlayersText;
+var playerReady = false;
 
 export default class StartScene extends Phaser.Scene {
     constructor() {
@@ -32,27 +33,29 @@ export default class StartScene extends Phaser.Scene {
 
       const socket = getSocket();
       
-    
-
       var element = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('startSceneHTML');
       var title_gastro_quiz = self.physics.add.sprite(0, 20, 'title_gastro_quiz').setOrigin(0,0);
       currentConnectedPlayersText = self.add.text(15, 815, 'Connected: ' + Global.currentConnectedPlayers);
 
-      startbutton = new MyDOMElement(self, (CONFIG.DEFAULT_WIDTH/2)-50, 400, element.getChildByID("startbutton")); 
+      startbutton = new MyDOMElement(self, (CONFIG.DEFAULT_WIDTH/2)-100, 400, element.getChildByID("startbutton")); 
       quitbutton = new MyDOMElement(self, 338, 820, element.getChildByID("quitbutton")); 
-
-      startbutton.setInteractive();
-      quitbutton.setInteractive();
-      
+      startbutton.setOrigin(0,0).addListener('click');
+      startbutton.on('click', function (pointer){
+        if (playerReady){
+          playerReady = false;
+          console.log("Player is not ready!");
+          document.getElementById("startbutton").style.backgroundColor = "blue";
+        }
+        else{
+          playerReady = true;
+          console.log("Player is ready!");
+          document.getElementById("startbutton").style.backgroundColor = "grey";
+        }
+        socket.emit('setPlayerReady', playerReady);
+      });
+      quitbutton.setOrigin(0,0).addListener('click');
 
       socket.emit('getPlayerCountCurrent');
-
-      
-
-      startbutton.on('pointerdown', function (pointer){
-        console.log("Player is ready!");
-        socket.emit('setPlayerReady', Global.isHost, Global.isGuest);
-      });
 
       socket.on('setPlayerCountCurrent', function(playerCountCurrent){
         Global.currentConnectedPlayers = playerCountCurrent;
@@ -64,7 +67,6 @@ export default class StartScene extends Phaser.Scene {
           Global.isGuest = true;
         }
       });
-
       socket.on('startGame', function(){
         startbutton.destroy();
         quitbutton.destroy();
@@ -74,8 +76,6 @@ export default class StartScene extends Phaser.Scene {
         self.scene.get("StartScene").scene.setActive(false);
 
       });
-
-
       socket.on('gameFullCall', function(){
         startbutton.destroy();
         quitbutton.destroy();
@@ -84,13 +84,14 @@ export default class StartScene extends Phaser.Scene {
         self.scene.get("StartScene").scene.setVisible(false);
         self.scene.get("StartScene").scene.setActive(false);
         socket.emit('disconnect', "Game is full.");
-
       });
-  
+
+      socket.on('setSockeId', function(hostId, guestId){
+        Global.hostId = hostId;
+        Global.guestId = guestId;
+      });
     }
 
     update() {
     }
-
- 
 }

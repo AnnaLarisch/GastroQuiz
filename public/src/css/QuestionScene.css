@@ -3,7 +3,7 @@ html {
   }
 
 .btn {
-    font-size: 2.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     color: rgb(9, 1, 135);
     width: 150px;
@@ -14,19 +14,19 @@ html {
 }
 
 #questionDiv {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: bold;
     color: rgb(191, 188, 220);
     width: 325px;
     height: 200px;
-    text-align: start;
+    text-align: center;
     border: 4px solid rgb(9, 1, 135);
     border-radius: 18px;
     background-color: rgb(99, 99, 99);
 }
 
 #categoryDiv {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: bold;
     color: rgb(191, 188, 220);
     width: 325px;
@@ -37,8 +37,8 @@ html {
     background-color: rgb(99, 99, 99);
 }
 
-#progressBar1 {
-    background-color: rgb(51, 51, 190);
+#progressBarQuestion {
+    background-color: green;
     width: 325px;
     height: 25px;
     border-radius: 10px;

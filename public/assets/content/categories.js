@@ -2,34 +2,22 @@ export default
 {
     "categories": [
         {
-            "category": "Video Games", 
+            "category": "Videospiele", 
         },
         {
-            "category": "Movies",
+            "category": "Filme und Serien",
         },
         {
-            "category": "Cartoons",
+            "category": "Geographie",
         },
         {
-            "category": "Literature",
+            "category": "Literatur und Bücher",
         },
         {
-            "category": "Music",
+            "category": "Musik",
         },
         {
-            "category": "Board Games",
+            "category": "Geschichte und Religion",
         },
-        {
-            "category": "Food and Drink",
-        },
-        {
-            "category": "Geography",
-        },
-        {
-            "category": "Religion",
-        },
-        {
-            "category": "History",
-        }
     ]
 }

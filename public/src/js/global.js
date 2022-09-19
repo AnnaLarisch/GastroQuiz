@@ -1,4 +1,6 @@
 var Global = {
+    hostId: "",
+    guestId: "",
     currentConnectedPlayers: 0,
     playerOneScore: 0,
     playerTwoScore: 0,
@@ -8,7 +10,12 @@ var Global = {
     isHost: false,
     isGuest: false,
     categoryDecider: "Player 1",
-    usedQuestions: []
+    usedQuestions: [],
+    currentCategoryAmount: 0,
+    currentQuestionsPerCategoryAmount: 0,
+    currentQuestionsOverallAmount: 0,
+    categoryReset: false,
+    questionReset: false
 }
 
 

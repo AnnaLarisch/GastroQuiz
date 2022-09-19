@@ -33,6 +33,11 @@ export default class MyDOMElement extends Phaser.GameObjects.DOMElement {
     setPositionY(y){   
         this.y = y;
     }
+    setPosition(x, y){  
+        this.x = x; 
+        this.y = y;
+    }
+
 
     getPositionX(){
         return this.x;
@@ -46,7 +51,6 @@ export default class MyDOMElement extends Phaser.GameObjects.DOMElement {
     }
     setHeight(height){
         this.height = height;
-
     }
 
     // preUpdate(time, delta) {
