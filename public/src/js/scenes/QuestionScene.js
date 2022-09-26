@@ -16,13 +16,14 @@ var self;
 
 // HTML element variables
 var elementQuestionSceneHTML;
-var categoryDiv;
 var questionDiv;
 var answer1Button;
 var answer2Button;
 var answer3Button;
 var answer4Button;
 var progressBarQuestion;
+var questionHeader;
+var questionHeaderContent;
 
 // Phaser game element variables
 var profileIconPlayer1;
@@ -33,7 +34,7 @@ var playerOneNameText;
 var playerTwoNameText;
 
 var progressBarStart = 330;
-var progressBarIntervall = 20;
+var progressBarIntervall = 10;
 
 var progressBarInterval;
 
@@ -56,7 +57,7 @@ var usedQuestions = [];
 
 export default class QuestionScene extends Phaser.Scene {
     constructor() {
-      super({ key: 'QuestionScene' });
+      super({ key: 'QuestionScene'});
     }
     preload() {
         this.load.html('questionSceneHTML', 'src/html/QuestionScene.html');
@@ -66,6 +67,7 @@ export default class QuestionScene extends Phaser.Scene {
 
       // Scene & Socket Management
       self = this;
+      Global.questionSceneLaunched = true;
 
       // Question selection
       if (Global.isHost){
@@ -74,23 +76,28 @@ export default class QuestionScene extends Phaser.Scene {
 
       // HTML element placement & setup
       elementQuestionSceneHTML = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('questionSceneHTML');
-      
-      progressBarQuestion = new MyDOMElement(self, 34, 760, elementQuestionSceneHTML.getChildByID("progressBarQuestion")); 
+
+      questionHeader = new MyDOMElement(self, 0, 0, elementQuestionSceneHTML.getChildByID("headerQuestion"));
+      questionHeaderContent = new MyDOMElement(self, 0, 30, elementQuestionSceneHTML.getChildByID("headerQuestionContent"), null, ""+Global.currentCategory);
+      questionHeader.setOrigin(0,0);
+      questionHeaderContent.setOrigin(0,0);
+      questionHeaderContent.setInnerText(""+Global.currentCategory);
+
+
+      progressBarQuestion = new MyDOMElement(self, 34, 140, elementQuestionSceneHTML.getChildByID("progressBarQuestion")); 
       progressBarQuestion.setOrigin(0, 0);
       if (Global.isHost){
         progressBarMovement(progressBarStart, progressBarIntervall);  
       }
 
-      categoryDiv = new MyDOMElement(self, 34, 250, elementQuestionSceneHTML.getChildByID("categoryDiv"), null, Global.currentCategory); 
-      questionDiv = new MyDOMElement(self, 34, 310, elementQuestionSceneHTML.getChildByID("questionDiv"), null, "Current Question"); 
+      questionDiv = new MyDOMElement(self, 34, 200, elementQuestionSceneHTML.getChildByID("questionDiv"), null, "Current Question"); 
 
-      categoryDiv.setOrigin(0, 0);
       questionDiv.setOrigin(0, 0);
 
-      answer1Button = new MyDOMElement(self, 34, 550, elementQuestionSceneHTML.getChildByID("answer1Button"), null, "Answer 1"); 
-      answer2Button = new MyDOMElement(self, 204, 550, elementQuestionSceneHTML.getChildByID("answer2Button"), null, "Answer 2"); 
-      answer3Button = new MyDOMElement(self, 34, 650, elementQuestionSceneHTML.getChildByID("answer3Button"), null, "Answer 3"); 
-      answer4Button = new MyDOMElement(self, 204, 650, elementQuestionSceneHTML.getChildByID("answer4Button"), null, "Answer 4"); 
+      answer1Button = new MyDOMElement(self, 10, 460, elementQuestionSceneHTML.getChildByID("answer1Button"), null, "Answer 1"); 
+      answer2Button = new MyDOMElement(self, 10, 540, elementQuestionSceneHTML.getChildByID("answer2Button"), null, "Answer 2"); 
+      answer3Button = new MyDOMElement(self, 10, 620, elementQuestionSceneHTML.getChildByID("answer3Button"), null, "Answer 3"); 
+      answer4Button = new MyDOMElement(self, 10, 700, elementQuestionSceneHTML.getChildByID("answer4Button"), null, "Answer 4"); 
       
       answer1Button.setOrigin(0, 0).addListener('click');
       answer2Button.setOrigin(0, 0).addListener('click');
@@ -99,12 +106,12 @@ export default class QuestionScene extends Phaser.Scene {
       
 
       // Phaser game element placement & setup
-      profileIconPlayer1 = self.physics.add.sprite(30, 40, 'profile_icon').setOrigin(0,0);
+     /* profileIconPlayer1 = self.physics.add.sprite(30, 40, 'profile_icon').setOrigin(0,0);
       profileIconPlayer2 = self.physics.add.sprite(280, 40, 'profile_icon').setOrigin(0,0);
       playerOneScoreText = self.add.text(58, 170, Global.playerOneScore, { fontSize: 60 } );
       playerTwoScoreText = self.add.text(312, 170, Global.playerTwoScore, { fontSize: 60 } );
       playerOneNameText = self.add.text(35, 140, Global.playerOneName, { fontSize: 20 } );
-      playerTwoNameText = self.add.text(285, 140, Global.playerTwoName, { fontSize: 20 } );
+      playerTwoNameText = self.add.text(285, 140, Global.playerTwoName, { fontSize: 20 } ); */
 
       currentQuestionRound = self.add.text(15, 815, 'Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES + " and Question: " + (Global.currentQuestionsPerCategoryAmount+1) + "/" + CONFIG.MAX_QUESTIONS_PER_CATEGORY);
 
@@ -133,6 +140,9 @@ export default class QuestionScene extends Phaser.Scene {
         setAndClearButtonColor(4, 1, 2, 3);
       });
 
+      // Socket Interactions
+
+      // Set chosen question for all players 
       socket.on('tellQuestionGame', function(currentQuestion_s, correct_answer_s, currentAnswers_s, shuffleAnswers_s){
         currentQuestion = currentQuestion_s;
         correct_answer = correct_answer_s;
@@ -143,21 +153,13 @@ export default class QuestionScene extends Phaser.Scene {
         answer2Button.setInnerText(shuffleAnswers_s[1]);
         answer3Button.setInnerText(shuffleAnswers_s[2]);
         answer4Button.setInnerText(shuffleAnswers_s[3]);
-        categoryDiv.setInnerText(currentQuestion_s.category);
+        questionHeaderContent.setInnerText(currentQuestion_s.category);
         questionDiv.setInnerText(currentQuestion_s.question);
       });
 
-
+      // Host tells other players to move prpgress bar
       socket.on('moveProgressBarGame', function(progressBarWidth){
-        if(progressBarWidth>=0){    
-          document.getElementById("progressBarQuestion").style.width = progressBarWidth.toString() +"px"
-        } else {
-          document.getElementById("progressBarQuestion").style.width = "0px"
-          if (Global.isHost){
-            clearInterval(progressBarInterval);
-          }
-          checkAnswers();
-        }
+        // Prgress Bar colour change
         if (progressBarWidth > 160){
           document.getElementById("progressBarQuestion").style.backgroundColor = "green";
         }
@@ -167,37 +169,59 @@ export default class QuestionScene extends Phaser.Scene {
         if (progressBarWidth <= 50 && progressBarWidth > 0){
           document.getElementById("progressBarQuestion").style.backgroundColor = "red";
         }
+
+        // Progress Bar size reduction
+        if(progressBarWidth >= 0){    
+          document.getElementById("progressBarQuestion").style.width = progressBarWidth.toString() +"px"
+        } else {
+          document.getElementById("progressBarQuestion").style.width = "0px"
+          if (Global.isHost){
+            clearInterval(progressBarInterval);
+          }
+          // If time is up, call to check correct answer
+          checkAnswers();
+        }
+        
       });
 
-      socket.on('increaseScoreHostGame', function(score){
-        Global.playerTwoScore = score;
-        playerTwoScoreText.setText(Global.playerTwoScore)
-      });
-      socket.on('increaseScoreGuestGame', function(score){
-        Global.playerOneScore = score;
-        playerOneScoreText.setText(Global.playerOneScore)
+      socket.on('increaseScoreGame', function(isHost){
+        if (isHost){
+          Global.playerOneScore = Global.playerOneScore + 1;
+          //playerOneScoreText.setText(Global.playerOneScore);
+        }
+        else{
+          Global.playerTwoScore = Global.playerTwoScore + 1;
+          //playerTwoScoreText.setText(Global.playerTwoScore)
+        }
       });
 
       socket.on('resetSceneGame', function(){
         currentQuestionRound.setText('Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES + " and Question: " + (Global.currentQuestionsPerCategoryAmount+1) + "/" + CONFIG.MAX_QUESTIONS_PER_CATEGORY);
         chosenAnswer = "NO_ANSWER";
         chosenButton = 0;
-        document.getElementById("answer1Button").style.backgroundColor = "blue"
-        document.getElementById("answer2Button").style.backgroundColor = "blue"
-        document.getElementById("answer3Button").style.backgroundColor = "blue"
-        document.getElementById("answer4Button").style.backgroundColor = "blue"
+        document.getElementById("answer1Button").style.backgroundColor = "#999797"
+        document.getElementById("answer2Button").style.backgroundColor = "#999797"
+        document.getElementById("answer3Button").style.backgroundColor = "#999797"
+        document.getElementById("answer4Button").style.backgroundColor = "#999797"
+        document.getElementById("answer1Button").style.width = "370px";
+        document.getElementById("answer2Button").style.width = "370px";
+        document.getElementById("answer3Button").style.width = "370px";
+        document.getElementById("answer4Button").style.width = "370px";
+
       });
+
       socket.on('backToCategoryGame', function(){
         chosenAnswer = "NO_ANSWER";
         chosenButton = 0;
         availableQuestionList.splice(0,availableQuestionList.length)
 
-        document.getElementById("categoryDiv").style.visibility = "hidden";
         document.getElementById("questionDiv").style.visibility = "hidden";
         document.getElementById("answer1Button").style.visibility = "hidden";
         document.getElementById("answer2Button").style.visibility = "hidden";
         document.getElementById("answer3Button").style.visibility = "hidden";
         document.getElementById("answer4Button").style.visibility = "hidden";
+        document.getElementById("headerQuestionContent").style.visibility = "hidden";
+        document.getElementById("headerQuestion").style.visibility = "hidden";
 
         self.scene.setVisible(false);
         self.scene.setActive(false);
@@ -212,6 +236,8 @@ export default class QuestionScene extends Phaser.Scene {
         document.getElementById("answer2Button").style.visibility = "hidden";
         document.getElementById("answer3Button").style.visibility = "hidden";
         document.getElementById("answer4Button").style.visibility = "hidden";
+        document.getElementById("headerQuestionContent").style.visibility = "hidden";
+        document.getElementById("headerQuestion").style.visibility = "hidden";
         self.scene.setVisible(false);
         self.scene.setActive(false);
         self.scene.launch("ScoreScene");
@@ -236,16 +262,17 @@ export default class QuestionScene extends Phaser.Scene {
         progressBarMovement(progressBarStart, progressBarIntervall);  
       }
       currentQuestionRound.setText('Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES + " and Question: " + (Global.currentQuestionsPerCategoryAmount+1) + "/" + CONFIG.MAX_QUESTIONS_PER_CATEGORY);
-      document.getElementById("categoryDiv").style.visibility = "visible";
       document.getElementById("questionDiv").style.visibility = "visible";
       document.getElementById("answer1Button").style.visibility = "visible";
       document.getElementById("answer2Button").style.visibility = "visible";
       document.getElementById("answer3Button").style.visibility = "visible";
       document.getElementById("answer4Button").style.visibility = "visible";
-      document.getElementById("answer1Button").style.backgroundColor = "blue"
-      document.getElementById("answer2Button").style.backgroundColor = "blue"
-      document.getElementById("answer3Button").style.backgroundColor = "blue"
-      document.getElementById("answer4Button").style.backgroundColor = "blue"
+      document.getElementById("headerQuestion").style.visibility = "visible";
+      document.getElementById("headerQuestionContent").style.visibility = "visible";
+      document.getElementById("answer1Button").style.backgroundColor = "#999797"
+      document.getElementById("answer2Button").style.backgroundColor = "#999797"
+      document.getElementById("answer3Button").style.backgroundColor = "#999797"
+      document.getElementById("answer4Button").style.backgroundColor = "#999797"
     }
 }
 
@@ -285,7 +312,7 @@ function progressBarMovement(progressBarWidth, Interval){
   progressBarInterval = setInterval(function(){
     progressBarWidth = progressBarWidth - Interval;
     socket.emit('moveProgressBarServer', progressBarWidth);
-    }, 500);
+    }, 800);
 }
 
 function checkAnswers(){
@@ -293,14 +320,10 @@ function checkAnswers(){
     document.getElementById("answer"+ chosenButton + "Button").style.backgroundColor = "green"
 
     if (Global.isHost){
-      Global.playerOneScore = Global.playerOneScore + 1;
-      playerOneScoreText.setText(Global.playerOneScore);
-      socket.emit('increaseScoreGuestServer', Global.guestId, Global.playerOneScore);
+      socket.emit('increaseScoreServer', true);
     }
     else{
-      Global.playerTwoScore = Global.playerTwoScore + 1;
-      playerTwoScoreText.setText(Global.playerTwoScore)
-      socket.emit('increaseScoreHostServer', Global.hostId, Global.playerTwoScore);
+      socket.emit('increaseScoreServer', false);
     }
     console.log("Correct answer selected!")
   }
@@ -341,11 +364,11 @@ function checkAnswers(){
 }, 1300);
 
 }
-function setAndClearButtonColor(setId, clearId1, clearId2, clearId3, clearId4){
-  document.getElementById("answer"+ setId + "Button").style.backgroundColor = "gray"
-  document.getElementById("answer"+ clearId1 + "Button").style.backgroundColor = "blue"
-  document.getElementById("answer"+ clearId2 + "Button").style.backgroundColor = "blue"
-  document.getElementById("answer"+ clearId3 + "Button").style.backgroundColor = "blue"
+function setAndClearButtonColor(setId, clearId1, clearId2, clearId3){
+  document.getElementById("answer"+ setId + "Button").style.backgroundColor = "orange"
+  document.getElementById("answer"+ clearId1 + "Button").style.backgroundColor = "#999797"
+  document.getElementById("answer"+ clearId2 + "Button").style.backgroundColor = "#999797"
+  document.getElementById("answer"+ clearId3 + "Button").style.backgroundColor = "#999797"
 };
 
 

@@ -3,13 +3,113 @@ html {
   }
 
 .btn {
-    font-size: 1.5rem;
+    background-color: #0f3c4c;
+    font-size: 2.5rem;
     font-weight: bold;
-    color: rgb(9, 1, 135);
-    width: 150px;
+    color: rgb(255, 255, 255);
+    width: 370px;
     height: 80px;
     text-align: center;
-    border: 4px solid rgb(9, 1, 135);
-    border-radius: 18px;
     pointer-events: none;
+    box-shadow: inset 0.2em 0.2em 0.2em 0 rgba(255,255,255,0.5), inset -0.2em -0.2em 0.2em 0 rgba(0,0,0,0.5), inset 0.4em 0.4em 0.4em 0 rgba(255,255,255,0.2);
+    border-radius: 4px;
+
 }
+
+#header{
+  width: 393px;
+  height: 150px;
+  background-color:#0f3c4c;
+  border-radius: 55px;
+  text-align: center;
+  font-size: 3.5rem;
+  color: white;
+  font-weight: bold;
+  box-shadow: inset 0.2em 0.2em 0.2em 0 rgba(255,255,255,0.5), inset -0.2em -0.2em 0.2em 0 rgba(0,0,0,0.5);
+}
+
+#header-content {
+  position: absolute;
+  bottom: 11%;
+  left: 25%;
+  text-align: center;
+
+}
+
+#footer{
+  width: 393px;
+  height: 20px;
+  background-color: #134b5f;
+  border-radius: 55px;
+  text-align: center;
+  font-size: 3.5rem;
+  color: white;
+  font-weight: bold;
+}
+
+#footer-content {
+  position: absolute;
+  bottom: 11%;
+  left: 25%;
+  text-align: center;
+
+}
+
+
+#player1Backsprite{
+  background-color: #134b5f;
+  width: 370px;
+  height: 100px;
+  box-shadow: inset 0.2em 0.2em 0.2em 0 rgba(255,255,255,0.5), inset -0.2em -0.2em 0.2em 0 rgba(0,0,0,0.5);
+
+}
+#player1ProfileIcon{
+  width: 100px;
+  height: 100px;
+}
+#player1Text{
+  font-size: 3.5rem;
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  text-align: right;
+}
+
+#player2Backsprite{
+  background-color: #134b5f;
+  width: 370px;
+  height: 100px;
+  box-shadow: inset 0.2em 0.2em 0.2em 0 rgba(255,255,255,0.5), inset -0.2em -0.2em 0.2em 0 rgba(0,0,0,0.5);
+
+ 
+}
+#player2ProfileIcon{
+  width: 100px;
+  height: 100px;
+}
+#player2Text{
+  font-size: 3.5rem;
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  text-align: left;
+}
+
+
+#playerTurnDiv{
+  background-color: #134b5f;
+  width: 370px;
+  height: 40px;
+  box-shadow: inset 0.2em 0.2em 0.2em 0 rgba(255,255,255,0.5), inset -0.2em -0.2em 0.2em 0 rgba(0,0,0,0.5);
+
+}
+
+
+#playerTurnText{
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  text-align: left;
+}
+

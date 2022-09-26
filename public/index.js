@@ -5,6 +5,8 @@ import UIScene from './src/js/scenes/UIScene.js';
 import SettingsScene from './src/js/scenes/SettingsScene.js';
 import CreditsScene from './src/js/scenes/CreditsScene.js';
 import ScoreScene from './src/js/scenes/ScoreScene.js';
+import BackgroundScene from './src/js/scenes/BackgroundScene.js';
+
 
 import SocketIOScene from './src/js/scenes/SocketIOScene.js';
 
@@ -17,7 +19,7 @@ var config = {
     type: Phaser.CANVAS,
     width: CONFIG.DEFAULT_WIDTH,
     height: CONFIG.DEFAULT_HEIGHT,
-    backgroundColor: "#b0b0b0",
+    backgroundColor: "#0b2d39",
     dom: {
       createContainer: true
     },
@@ -35,8 +37,8 @@ var config = {
         gravity: { y: CONFIG.DEFAULT_GRAVITY }
       }
     },
-    scene: [SocketIOScene, StartScene, UIScene, SettingsScene, CreditsScene, ScoreScene, CategoryChoiceScene, QuestionScene, GameFullScene]
-    //scene: [QuestionScene, SocketIOScene, StartScene, UIScene, SettingsScene, CreditsScene, ScoreScene, CategoryChoiceScene]
+    scene: [SocketIOScene, StartScene, UIScene, SettingsScene, CreditsScene, ScoreScene, CategoryChoiceScene, QuestionScene, GameFullScene, BackgroundScene]
+    //scene: [QuestionScene, CategoryChoiceScene, SocketIOScene, StartScene, UIScene, SettingsScene, CreditsScene, ScoreScene]
 
   };
 

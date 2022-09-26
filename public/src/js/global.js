@@ -14,8 +14,8 @@ var Global = {
     currentCategoryAmount: 0,
     currentQuestionsPerCategoryAmount: 0,
     currentQuestionsOverallAmount: 0,
-    categoryReset: false,
-    questionReset: false
+    questionSceneLaunched: false
+
 }
 
 
@@ -25,7 +25,8 @@ export function getRandomIntInclusive(min, max){
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  
+
+// Take 
 export function arrayRemove(arr, value) { 
     
     return arr.filter(function(ele){ 
@@ -33,8 +34,10 @@ export function arrayRemove(arr, value) {
     });
 }
 
+// Take an array, and shuffle position of elements
 export function shuffleArray(returnArray){
     var j, x, i;
+    console.log(returnArray)
       for (i = returnArray.length - 1; i > 0; i--) {
           j = Math.floor(Math.random() * (i + 1));
           x = returnArray[i];
@@ -42,6 +45,13 @@ export function shuffleArray(returnArray){
           returnArray[j] = x;
       }
       return returnArray;
+  }
+
+  export function filterArray(toBeFilteredArray, filteringArray){
+    toBeFilteredArray = toBeFilteredArray.filter( function( el ) {
+        return !filteringArray.includes( el );
+      } );
+    return toBeFilteredArray;
   }
 
 export default Global
