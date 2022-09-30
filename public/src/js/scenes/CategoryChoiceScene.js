@@ -90,7 +90,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
 
         player1Backsprite = new MyDOMElement(self, 11, 130, elementCategoryChoiceSceneHTML.getChildByID("player1Backsprite"));
         player1ProfileIcon = new MyDOMElement(self, 30, 128, elementCategoryChoiceSceneHTML.getChildByID("player1ProfileIcon"));
-        player1Text = new MyDOMElement(self, 200, 125, elementCategoryChoiceSceneHTML.getChildByID("player1Text"));
+        player1Text = new MyDOMElement(self, 190, 125, elementCategoryChoiceSceneHTML.getChildByID("player1Text"));
         player1Text.setInnerText(Global.playerOneName +"\nScore: "+ Global.playerOneScore +" / " + Global.currentQuestionsOverallAmount)
         player1Backsprite.setOrigin(0,0);
         player1ProfileIcon.setOrigin(0,0);

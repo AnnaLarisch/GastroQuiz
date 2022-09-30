@@ -114,8 +114,8 @@ io.on('connection', function (socket) {
     io.in('game').emit('tellCategoriesGame', category1, category2, category3);
   });
 
-  socket.on('tellQuestionServer', function(currentQuestion, correct_answer, currentAnswers, shuffleAnswers){
-    io.in('game').emit('tellQuestionGame', currentQuestion, correct_answer, currentAnswers, shuffleAnswers);
+  socket.on('tellQuestionServer', function(currentQuestion, correct_answer, correct_answer_button, currentAnswers, shuffleAnswers){
+    io.in('game').emit('tellQuestionGame', currentQuestion, correct_answer, correct_answer_button, currentAnswers, shuffleAnswers);
   });
 
   // Question Scene
@@ -145,6 +145,9 @@ io.on('connection', function (socket) {
   
   socket.on('backToCategoryServer', function(){
     io.in('game').emit('backToCategoryGame');
+  });
+  socket.on('tellAnswerToOpponentServer', function(chosenAnswer, opponentID, sendByHost){
+    io.to(opponentID).emit('tellAnswerToOpponentGame',chosenAnswer, sendByHost);
   });
 });
 
