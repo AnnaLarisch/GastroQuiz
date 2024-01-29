@@ -165,7 +165,7 @@ function getPlayer(socket){
 // Server listens on port 80 for join requests
 // use 8081 for localhost testing and 80 for heroku server testing
 
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 80;
 
 
 server.listen(PORT, function () {
