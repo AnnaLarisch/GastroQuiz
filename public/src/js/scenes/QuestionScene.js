@@ -72,12 +72,29 @@ export default class QuestionScene extends Phaser.Scene {
         this.load.image('profile_icon', 'assets/scenes/QuestionScene/placeholder_profile_icon.png')
         this.load.image('profile_icon_blue_popup', 'assets/scenes/QuestionScene/placeholder_profile_icon_blue_popup.png')
         this.load.image('profile_icon_orange_popup', 'assets/scenes/QuestionScene/placeholder_profile_icon_orange_popup.png')
+        this.load.image('question_background', 'assets/scenes/QuestionScene/question_background.png')
+
     }
     create() {
 
       // Scene & Socket Management
       self = this;
       Global.questionSceneLaunched = true;
+      const cameraWidth = self.cameras.main.width
+      const cameraHeight = self.cameras.main.height
+
+      self.scene.launch("UIScene");
+      self.scene.get("UIScene").scene.setVisible(true);
+      self.scene.get("UIScene").scene.bringToTop();
+      self.scene.launch("BackgroundScene");
+      self.scene.get("BackgroundScene").scene.setVisible(true);
+      self.scene.get("BackgroundScene").scene.sendToBack();
+
+      const question_background = self.add.image(0, 0, 'question_background')
+      .setOrigin(0)
+
+      question_background.setScale(Math.max(cameraWidth / question_background.width, cameraHeight / question_background.height));
+
 
       // Question selection
       if (Global.isHost){
@@ -87,45 +104,33 @@ export default class QuestionScene extends Phaser.Scene {
       // HTML element placement & setup
       elementQuestionSceneHTML = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('questionSceneHTML');
 
-      questionHeader = new MyDOMElement(self, 0, -15, elementQuestionSceneHTML.getChildByID("headerQuestion"));
-      questionHeader.setOrigin(0,0);
-      questionHeader.setInnerText(""  + Global.currentCategory)
       htmlElementList.push("headerQuestion");
 
-      var progressBarBehindQuestion = new MyDOMElement(self, 30, 115, elementQuestionSceneHTML.getChildByID("progressBarBehindQuestion")); 
+      var progressBarBehindQuestion = new MyDOMElement(self, 470, 412, elementQuestionSceneHTML.getChildByID("progressBarBehindQuestion")); 
       progressBarBehindQuestion.setOrigin(0, 0);
-      progressBarQuestion = new MyDOMElement(self, 34, 119, elementQuestionSceneHTML.getChildByID("progressBarQuestion")); 
+      progressBarQuestion = new MyDOMElement(self, 474, 415, elementQuestionSceneHTML.getChildByID("progressBarQuestion")); 
       progressBarQuestion.setOrigin(0, 0);
-      var topLine = new MyDOMElement(self, 10, 175, elementQuestionSceneHTML.getChildByID("topline")); 
-      topLine.setOrigin(0, 0);
       console.log(questionHeader);
       if (Global.isHost){
         progressBarMovement(progressBarStart, progressBarIntervall);  
       }
 
-      questionDiv = new MyDOMElement(self, 34, 205, elementQuestionSceneHTML.getChildByID("questionDiv"), null, "Current Question"); 
 
+
+      questionDiv = new MyDOMElement(self, 200, 135, elementQuestionSceneHTML.getChildByID("questionDiv"), null, "Current Question"); 
       questionDiv.setOrigin(0, 0);
 
-      answer1Button = new MyDOMElement(self, 10, 460, elementQuestionSceneHTML.getChildByID("answer1Button"), null, "Answer 1"); 
-      answer2Button = new MyDOMElement(self, 10, 540, elementQuestionSceneHTML.getChildByID("answer2Button"), null, "Answer 2"); 
-      answer3Button = new MyDOMElement(self, 10, 620, elementQuestionSceneHTML.getChildByID("answer3Button"), null, "Answer 3"); 
-      answer4Button = new MyDOMElement(self, 10, 700, elementQuestionSceneHTML.getChildByID("answer4Button"), null, "Answer 4"); 
-     
+      answer1Button = new MyDOMElement(self, 50, 500, elementQuestionSceneHTML.getChildByID("answer1Button"), null, "Answer 1"); 
+      answer2Button = new MyDOMElement(self, 665, 500, elementQuestionSceneHTML.getChildByID("answer2Button"), null, "Answer 2"); 
+      answer3Button = new MyDOMElement(self, 50, 620, elementQuestionSceneHTML.getChildByID("answer3Button"), null, "Answer 3"); 
+      answer4Button = new MyDOMElement(self, 665, 620, elementQuestionSceneHTML.getChildByID("answer4Button"), null, "Answer 4"); 
       answer1Button.setOrigin(0, 0).addListener('click');
       answer2Button.setOrigin(0, 0).addListener('click');
       answer3Button.setOrigin(0, 0).addListener('click');
       answer4Button.setOrigin(0, 0).addListener('click');
 
-      var dot1 = new MyDOMElement(self, 25, 470, elementQuestionSceneHTML.getChildByID("dot1"), null, null); 
-      var dot2 = new MyDOMElement(self, 25, 550, elementQuestionSceneHTML.getChildByID("dot2"), null, null); 
-      var dot3 = new MyDOMElement(self, 25, 630, elementQuestionSceneHTML.getChildByID("dot3"), null, null); 
-      var dot4 = new MyDOMElement(self, 25, 710, elementQuestionSceneHTML.getChildByID("dot4"), null, null); 
 
-      dot1.setOrigin(0, 0).addListener('click');
-      dot2.setOrigin(0, 0).addListener('click');
-      dot3.setOrigin(0, 0).addListener('click');
-      dot4.setOrigin(0, 0).addListener('click');
+
 
       player1ProfilePopUp = new MyDOMElement(self, -100, -100, elementQuestionSceneHTML.getChildByID("player1IconPopup"));
       player2ProfilePopUp = new MyDOMElement(self, -100, -100, elementQuestionSceneHTML.getChildByID("player2IconPopup"));
@@ -159,27 +164,7 @@ export default class QuestionScene extends Phaser.Scene {
         setAndClearButtonColor(4, 1, 2, 3);
       });
 
-      dot1.on('click', function (pointer){
-        chosenAnswer = shuffleAnswers[0];
-        chosenButton = 1;
-        setAndClearButtonColor(1, 2, 3, 4);
-      });
-      dot2.on('click', function (pointer){
-        chosenAnswer = shuffleAnswers[1];        
-        chosenButton = 2;
-        setAndClearButtonColor(2, 1, 3, 4);
-
-      });
-      dot3.on('click', function (pointer){
-        chosenAnswer = shuffleAnswers[2];
-        chosenButton = 3;        
-        setAndClearButtonColor(3, 1, 2, 4);
-      });
-      dot4.on('click', function (pointer){
-        chosenAnswer = shuffleAnswers[3];
-        chosenButton = 4;
-        setAndClearButtonColor(4, 1, 2, 3);
-      });
+    
 
       // Socket Interactions
 

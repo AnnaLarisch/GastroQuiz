@@ -27,7 +27,7 @@ export default class StartScene extends Phaser.Scene {
   
     preload() {
       this.load.html('startSceneHTML', 'src/html/StartScene.html');
-      this.load.image('title_gastro_quiz', 'assets/scenes/StartScene/title_gastro_quiz.png')
+      this.load.image('title_gastro_quiz', 'assets/scenes/StartScene/start_scene_title_gastro_quiz.png')
 
     }
     
@@ -35,34 +35,43 @@ export default class StartScene extends Phaser.Scene {
       
       // Scene management
       self = this;
+      const cameraWidth = self.cameras.main.width
+      const cameraHeight = self.cameras.main.height
 
       // Launch UI scene and Background scene
       self.scene.launch("UIScene");
       self.scene.get("UIScene").scene.setVisible(true);
       self.scene.get("UIScene").scene.bringToTop();
-      /*self.scene.launch("BackgroundScene");
+      self.scene.launch("BackgroundScene");
       self.scene.get("BackgroundScene").scene.setVisible(true);
-      self.scene.get("BackgroundScene").scene.sendToBack();*/
+      self.scene.get("BackgroundScene").scene.sendToBack();
 
       // HTML element placement & setup
       elementStartSceneHTML  = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('startSceneHTML');
       
-      startbutton = new MyDOMElement(self, (CONFIG.DEFAULT_WIDTH/2)-150, 400, elementStartSceneHTML.getChildByID("startbutton")); 
+      startbutton = new MyDOMElement(self, 360, 500, elementStartSceneHTML.getChildByID("startbutton")); 
       startbutton.setOrigin(0,0).addListener('click');
 
       // Phaser game element placement & setup
-      title_gastro_quiz = self.physics.add.sprite(0, 100, 'title_gastro_quiz').setOrigin(0,0);
+
+
+      const title_gastro_quiz = self.add.image(0, 0, 'title_gastro_quiz')
+      .setOrigin(0)
+
+      title_gastro_quiz.setScale(Math.max(cameraWidth / title_gastro_quiz.width, cameraHeight / title_gastro_quiz.height))
+
       currentConnectedPlayersText = self.add.text(15, 815, 'Connected: ' + Global.currentConnectedPlayers);
       socket.emit('setPlayerClassServer');
 
       startbutton.on('click', function (pointer){
         if (playerReady){
           playerReady = false;
-          document.getElementById("startbutton").style.backgroundColor = "rgb(213, 213, 213)";
+          document.getElementById("startbutton").innerHTML = "Nicht Bereit!";
+
         }
         else{
           playerReady = true;
-          document.getElementById("startbutton").style.backgroundColor = "grey";
+          document.getElementById("startbutton").innerHTML = "Bereit!";
         }
         socket.emit('setPlayerReadyServer', playerReady);
       });
@@ -113,5 +122,6 @@ export default class StartScene extends Phaser.Scene {
     }
 
     update() {
+
     }
 }

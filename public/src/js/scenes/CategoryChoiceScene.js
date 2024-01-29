@@ -60,29 +60,63 @@ export default class CategoryChoiceScene extends Phaser.Scene {
     preload() {
         this.load.html('categoryChoiceSceneHTML', 'src/html/CategoryChoiceScene.html');
         this.load.image('profile_icon', 'assets/scenes/CategoryChoiceScene/placeholder_profile_icon.png')
+        this.load.image('category_choice_bg', 'assets/scenes/CategoryChoiceScene/category_choice_background.png')
+
     }
     
     create() {
 
         // Scene management
+        // Scene management
         self = this;
+        const cameraWidth = self.cameras.main.width
+        const cameraHeight = self.cameras.main.height
+
+        self.scene.launch("UIScene");
+        self.scene.get("UIScene").scene.setVisible(true);
+        self.scene.get("UIScene").scene.bringToTop();
+        self.scene.launch("BackgroundScene");
+        self.scene.get("BackgroundScene").scene.setVisible(true);
+        self.scene.get("BackgroundScene").scene.sendToBack();
 
         // Category selection
         if (Global.isHost){
             chooseCategory(categories.categories);
         }
-    
+
+        const category_choice_bg = self.add.image(0, 0, 'category_choice_bg')
+        .setOrigin(0)
+
+        category_choice_bg.setScale(Math.max(cameraWidth / category_choice_bg.width, cameraHeight / category_choice_bg.height));
+
 
         // HTML element placement & setup
+
         elementCategoryChoiceSceneHTML  = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('categoryChoiceSceneHTML');
-        
-        category1Button = new MyDOMElement(self, 10, 500, elementCategoryChoiceSceneHTML.getChildByID("category1Button"), null, "Category"); 
-        category2Button = new MyDOMElement(self, 10, 600, elementCategoryChoiceSceneHTML.getChildByID("category2Button"), null, "Category"); 
-        category3Button = new MyDOMElement(self, 10, 700, elementCategoryChoiceSceneHTML.getChildByID("category3Button"), null, "Category");
+             
+        category1Button = new MyDOMElement(self, 50, 500, elementCategoryChoiceSceneHTML.getChildByID("category1Button"), null, "Category"); 
+        category2Button = new MyDOMElement(self, 665, 500, elementCategoryChoiceSceneHTML.getChildByID("category2Button"), null, "Category"); 
+        category3Button = new MyDOMElement(self, 360, 620, elementCategoryChoiceSceneHTML.getChildByID("category3Button"), null, "Category");
         category1Button.setOrigin(0,0).addListener('click');
         category2Button.setOrigin(0,0).addListener('click');
         category3Button.setOrigin(0,0).addListener('click');
+      
+      
+      
+        player1Text = new MyDOMElement(self, 170, 200, elementCategoryChoiceSceneHTML.getChildByID("player1Text"));
+        player1Text.setInnerText("Punkte: "+ Global.playerOneScore)
+        player1Text.setOrigin(0,0);
 
+
+        player2Text = new MyDOMElement(self, 865, 200, elementCategoryChoiceSceneHTML.getChildByID("player2Text"));
+        player2Text.setInnerText("Punkte: "+ Global.playerTwoScore)  
+        player2Text.setOrigin(0,0);
+
+
+        playerTurnText = new MyDOMElement(self, 530, 445, elementCategoryChoiceSceneHTML.getChildByID("playerTurnText"));
+        playerTurnText.setInnerText(Global.categoryDecider +" entscheidet!")
+        playerTurnText.setOrigin(0,0);
+/*
         header = new MyDOMElement(self, 0, -50, elementCategoryChoiceSceneHTML.getChildByID("header"));
         headerContent = new MyDOMElement(self, 0, -50, elementCategoryChoiceSceneHTML.getChildByID("header-content"), null, "GastroQuiz");
         header.setOrigin(0,0);
@@ -109,6 +143,8 @@ export default class CategoryChoiceScene extends Phaser.Scene {
         playerTurnText.setInnerText(Global.categoryDecider +" decides on a category: ")
         playerTurnDiv.setOrigin(0,0);
         playerTurnText.setOrigin(0,0);
+*/
+    
       
         // Phaser game element placement & setup
         //profileIconPlayer1 = self.physics.add.sprite(30, 40, 'profile_icon').setOrigin(0,0);
@@ -129,7 +165,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
             console.log("decider")
         }
         else{
-            //setColourList(["category1Button", "category2Button", "category3Button"], ["grey", "grey", "grey"])
+            setColourList(["category1Button", "category2Button", "category3Button"], ["grey", "grey", "grey"])
         }
         category1Button.on('click', function (pointer){
             if ((Global.categoryDecider === Global.playerOneName && Global.isHost) 
@@ -164,9 +200,6 @@ export default class CategoryChoiceScene extends Phaser.Scene {
             category1Button.setInnerText(category1);
             category2Button.setInnerText(category2);
             category3Button.setInnerText(category3);
-            document.getElementById("category1Button").style.width = "370px";
-            document.getElementById("category2Button").style.width = "370px";
-            document.getElementById("category3Button").style.width = "370px";
 
           });
           
@@ -180,7 +213,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
             // And after a short while, change to the next scene
             var toQuestionSceneTimeout = setTimeout(function(){
           
-                changeVisibilityList(["playerTurnDiv", "playerTurnText", "header", "header-content", "player1Backsprite","player1ProfileIcon","player1Text", "player2Backsprite","player2ProfileIcon","player2Text", "category1Button", "category2Button", "category3Button"], "hidden")
+                changeVisibilityList(["playerTurnText","player1Text", "player2Text", "category1Button", "category2Button", "category3Button"], "hidden")
     
                 self.scene.setVisible(false);
                 self.scene.setActive(false);
@@ -222,12 +255,11 @@ export default class CategoryChoiceScene extends Phaser.Scene {
     // Reset category for the next game round
     resetCategory(){
         changeCategoryDecider(Global.categoryDecider);
-        changeVisibilityList(["playerTurnDiv", "playerTurnText", "header", "header-content", "player1Backsprite","player1ProfileIcon","player1Text", "player2Backsprite","player2ProfileIcon","player2Text", "category1Button", "category2Button", "category3Button"], "visible")
-
+        changeVisibilityList( "visible")
         currentRound.setText('Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES);
         playerTurnText.setText(Global.categoryDecider + " decides on a category: ");
-        player1Text.setText(Global.playerOneName +"\nScore: "+ Global.playerOneScore +" / " + Global.currentQuestionsOverallAmount)
-        player2Text.setText(Global.playerTwoName +"\nScore: "+ Global.playerTwoScore +" / " + Global.currentQuestionsOverallAmount)
+        player1Text.setText("Punkte: "+ Global.playerOneScore)
+        player2Text.setText("Punkte: "+ Global.playerTwoScore)
 
 
        // chooseCategoryText.setText(Global.categoryDecider + " decides on a category: ");

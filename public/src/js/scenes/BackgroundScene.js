@@ -7,13 +7,19 @@ export default class BackgroundScene extends Phaser.Scene {
     }
   
     preload() {
-        this.load.image('background_blue', 'assets/scenes/BackgroundImage/background_blue.png')
+        this.load.image('background_white_asbtract', 'assets/scenes/BackgroundImage/background_white_abstract.png')
 
     }
     
     create() {
         self = this;
-        background_blue = self.physics.add.sprite(0, 0, 'background_blue').setOrigin(0,0);
+        const cameraWidth = self.cameras.main.width
+        const cameraHeight = self.cameras.main.height
+
+        const bg = self.add.image(0, 0, 'background_white_asbtract')
+        .setOrigin(0)
+
+        bg.setScale(Math.max(cameraWidth / bg.width, cameraHeight / bg.height))
 
     }
 

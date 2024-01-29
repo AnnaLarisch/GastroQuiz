@@ -16,6 +16,8 @@ export default class SocketIOScene extends Phaser.Scene {
 
         self = this;
         self.scene.launch("StartScene");
+        //self.scene.launch("CategoryChoiceScene");
+        //self.scene.launch("QuestionScene");
 
     }
 

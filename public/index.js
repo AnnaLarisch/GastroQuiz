@@ -17,19 +17,21 @@ import GameFullScene from './src/js/scenes/GameFullScene.js';
 
 var config = {
     type: Phaser.CANVAS,
-    width: CONFIG.DEFAULT_WIDTH,
-    height: CONFIG.DEFAULT_HEIGHT,
-    backgroundColor: "#0b2d39",
+    width: 1280,
+    height: 800,
+    backgroundColor: "#FFFFFF",
     dom: {
       createContainer: true
     },
     parent: 'phaser-example',
     fullscreenTarget: 'phaser-example',
 
-    scale:{
+    scale: {
+      // Fit to window
       mode: Phaser.Scale.FIT,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
-    },
+      // Center vertically and horizontally
+      autoCenter: Phaser.Scale.CENTER_BOTH
+  },
     physics: {
       default: 'arcade',
       arcade: {
