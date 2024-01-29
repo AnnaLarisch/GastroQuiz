@@ -448,7 +448,11 @@ function checkAnswers(){
     player1ProfilePopUp.setPosition(-100, -100);
     player2ProfilePopUp.setPosition(-100, -100);
     clearTimeout(answerGivenTimeout);
+    player1ProfilePopUp.setPosition(-100, -100);
+    player2ProfilePopUp.setPosition(-100, -100);
 }, 2000);
+    player1ProfilePopUp.setPosition(-100, -100);
+    player2ProfilePopUp.setPosition(-100, -100);
 
 }
 function setAndClearButtonColor(setId, clearId1, clearId2, clearId3){

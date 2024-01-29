@@ -5,7 +5,7 @@ var Global = {
     playerOneScore: 0,
     playerTwoScore: 0,
     playerOneName: "Team 1",
-    playerTwoName: "Tean 2",
+    playerTwoName: "Team 2",
     currentCategory: "Empty Category",
     isHost: false,
     isGuest: false,

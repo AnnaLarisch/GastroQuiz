@@ -64,7 +64,7 @@ io.on('connection', function (socket) {
 
   
 
-  
+
 
   socket.on("disconnect", (reason) => {
     player = getPlayer(socket);
@@ -149,6 +149,16 @@ io.on('connection', function (socket) {
   socket.on('tellAnswerToOpponentServer', function(chosenAnswer, opponentID, sendByHost){
     io.to(opponentID).emit('tellAnswerToOpponentGame',chosenAnswer, sendByHost);
   });
+
+  socket.on('setPlayerOneName', function(name){
+    io.in('game').emit('setPlayerOneNameGlobal', name);
+  });
+
+  socket.on('setPlayerTwoName', function(name){
+    io.in('game').emit('setPlayerTwoNameGlobal', name);
+  });
+
+
 });
 
 

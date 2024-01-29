@@ -19,5 +19,14 @@ export default
         {
             "category": "Geschichte und Religion",
         },
+        {
+            "category": "Wissenschaft und Technik",
+        },
+        {
+            "category": "Aktuelle Popkultur",
+        },
+        {
+            "category": "Saarland",
+        },
     ]
 }

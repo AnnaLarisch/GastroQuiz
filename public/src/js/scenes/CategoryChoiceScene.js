@@ -99,17 +99,17 @@ export default class CategoryChoiceScene extends Phaser.Scene {
       
       
         player1Text = new MyDOMElement(self, 170, 200, elementCategoryChoiceSceneHTML.getChildByID("player1Text"));
-        player1Text.setInnerText("Punkte: "+ Global.playerOneScore)
+        player1Text.setInnerText(Global.playerOneName + "\nPunkte: "+ Global.playerOneScore)
         player1Text.setOrigin(0,0);
 
 
         player2Text = new MyDOMElement(self, 865, 200, elementCategoryChoiceSceneHTML.getChildByID("player2Text"));
-        player2Text.setInnerText("Punkte: "+ Global.playerTwoScore)  
+        player2Text.setInnerText(Global.playerTwoName + "\nPunkte: "+ Global.playerTwoScore)  
         player2Text.setOrigin(0,0);
 
 
         playerTurnText = new MyDOMElement(self, 530, 445, elementCategoryChoiceSceneHTML.getChildByID("playerTurnText"));
-        playerTurnText.setInnerText(Global.categoryDecider +" entscheidet!")
+        playerTurnText.setInnerText("Team " + Global.categoryDecider +" entscheidet!")
         playerTurnText.setOrigin(0,0);
 /*
         header = new MyDOMElement(self, 0, -50, elementCategoryChoiceSceneHTML.getChildByID("header"));
@@ -257,7 +257,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
         changeCategoryDecider(Global.categoryDecider);
         changeVisibilityList(["playerTurnText","player1Text", "player2Text", "category1Button", "category2Button", "category3Button"], "visible")
         currentRound.setText('Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES);
-        playerTurnText.setText(Global.categoryDecider + " decides on a category: ");
+        playerTurnText.setText("Team " + Global.categoryDecider +" entscheidet!");
         player1Text.setText("Punkte: "+ Global.playerOneScore)
         player2Text.setText("Punkte: "+ Global.playerTwoScore)
 

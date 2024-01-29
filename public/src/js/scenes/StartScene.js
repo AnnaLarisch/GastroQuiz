@@ -12,6 +12,8 @@ const socket = getSocket();
 // HTML element variables
 var elementStartSceneHTML;
 var startbutton;
+var groupnameinput;
+
 
 // Phaser game element variables
 var currentConnectedPlayersText;
@@ -49,7 +51,9 @@ export default class StartScene extends Phaser.Scene {
       // HTML element placement & setup
       elementStartSceneHTML  = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('startSceneHTML');
       
-      startbutton = new MyDOMElement(self, 360, 500, elementStartSceneHTML.getChildByID("startbutton")); 
+      groupnameinput = new MyDOMElement(self, 360, 500, elementStartSceneHTML.getChildByID("group_name")); 
+      groupnameinput.setOrigin(0,0);
+      startbutton = new MyDOMElement(self, 360, 550, elementStartSceneHTML.getChildByID("startbutton")); 
       startbutton.setOrigin(0,0).addListener('click');
 
       // Phaser game element placement & setup
@@ -99,8 +103,22 @@ export default class StartScene extends Phaser.Scene {
 
       // End start scene and start into category choice scene
       socket.on('startGame', function(){
+        if (Global.isHost){
+          var name = document.getElementById("group_name");
+          Global.playerOneName = name.value;
+          console.log(name.value)
+          socket.emit('setPlayerOneName', name.value);
+        }
+        if (Global.isGuest){
+          var name =  document.getElementById("group_name");
+          Global.playerTwoName = name.value;
+          console.log(name.value)
+          socket.emit('setPlayerTwoName', name.value);
+        }
+        groupnameinput.destroy();
         startbutton.destroy();
         self.scene.launch("CategoryChoiceScene");
+       
 
         self.scene.get("StartScene").scene.setVisible(false);
         self.scene.get("StartScene").scene.setActive(false);
@@ -121,6 +139,16 @@ export default class StartScene extends Phaser.Scene {
       socket.on('setSockeId', function(hostId, guestId){
         Global.hostId = hostId;
         Global.guestId = guestId;
+      });
+
+      socket.on('setPlayerOneNameGlobal', function(name){
+        Global.playerOneName = name;
+        Global.categoryDecider = name;
+      });
+
+      socket.on('setPlayerTwoNameGlobal', function(name){
+        Global.playerTwoName = name;
+
       });
 
     }
