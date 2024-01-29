@@ -72,12 +72,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
         const cameraWidth = self.cameras.main.width
         const cameraHeight = self.cameras.main.height
 
-        self.scene.launch("UIScene");
-        self.scene.get("UIScene").scene.setVisible(true);
-        self.scene.get("UIScene").scene.bringToTop();
-        self.scene.launch("BackgroundScene");
-        self.scene.get("BackgroundScene").scene.setVisible(true);
-        self.scene.get("BackgroundScene").scene.sendToBack();
+    
 
         // Category selection
         if (Global.isHost){
@@ -165,7 +160,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
             console.log("decider")
         }
         else{
-            setColourList(["category1Button", "category2Button", "category3Button"], ["grey", "grey", "grey"])
+         
         }
         category1Button.on('click', function (pointer){
             if ((Global.categoryDecider === Global.playerOneName && Global.isHost) 
@@ -208,7 +203,11 @@ export default class CategoryChoiceScene extends Phaser.Scene {
         socket.on('chooseCategoryCallGame', function(categoryName, setId, clearId1, clearId2){
             Global.currentCategory = categoryName;
             usedCategories.push(categoryName);
-            setColourList(["category"+ setId + "Button", "category"+ clearId1 + "Button", "category"+ clearId2 + "Button"], ["orange", "gray", "gray"])
+            document.getElementById("category"+ setId + "Button").classList.add('btn-outline-success')
+            document.getElementById("category"+ setId + "Button").classList.remove('btn-outline-secondary')
+
+
+           //setColourList(["category"+ setId + "Button", "category"+ clearId1 + "Button", "category"+ clearId2 + "Button"], ["orange", "gray", "gray"])
 
             // And after a short while, change to the next scene
             var toQuestionSceneTimeout = setTimeout(function(){
@@ -234,7 +233,8 @@ export default class CategoryChoiceScene extends Phaser.Scene {
 
         // Set color of chosen category to orange
         socket.on('colourCategoryGame', function(chosenCategoryNumber_server){
-            document.getElementById("category"+ chosenCategoryNumber_server + "Button").style.backgroundColor = "orange"
+            document.getElementById("category"+ chosenCategoryNumber_server + "Button").classList.add('btn-outline-success')
+            document.getElementById("category"+ chosenCategoryNumber_server + "Button").classList.remove('btn-outline-secondary')
         });
 
 
@@ -255,7 +255,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
     // Reset category for the next game round
     resetCategory(){
         changeCategoryDecider(Global.categoryDecider);
-        changeVisibilityList( "visible")
+        changeVisibilityList(["playerTurnText","player1Text", "player2Text", "category1Button", "category2Button", "category3Button"], "visible")
         currentRound.setText('Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES);
         playerTurnText.setText(Global.categoryDecider + " decides on a category: ");
         player1Text.setText("Punkte: "+ Global.playerOneScore)
@@ -271,11 +271,21 @@ export default class CategoryChoiceScene extends Phaser.Scene {
 
         if ((Global.categoryDecider === Global.playerOneName && Global.isHost) ||
             (Global.categoryDecider === Global.playerTwoName && Global.isGuest)){
-            setColourList(["category1Button", "category2Button", "category3Button"], ["blue", "blue", "blue"])
+                document.getElementById("category1Button").classList.remove('btn-outline-success')
+                document.getElementById("category1Button").classList.add('btn-outline-secondary')
+                document.getElementById("category2Button").classList.remove('btn-outline-success')
+                document.getElementById("category2Button").classList.add('btn-outline-secondary')
+                document.getElementById("category3Button").classList.remove('btn-outline-success')
+                document.getElementById("category3Button").classList.add('btn-outline-secondary')
         } 
         if ((Global.categoryDecider === Global.playerOneName && !Global.isHost) ||
             (Global.categoryDecider === Global.playerTwoName && !Global.isGuest)){
-            setColourList(["category1Button", "category2Button", "category3Button"], ["grey", "grey", "grey"])
+                document.getElementById("category1Button").classList.remove('btn-outline-success')
+                document.getElementById("category1Button").classList.add('btn-outline-secondary')
+                document.getElementById("category2Button").classList.remove('btn-outline-success')
+                document.getElementById("category2Button").classList.add('btn-outline-secondary')
+                document.getElementById("category3Button").classList.remove('btn-outline-success')
+                document.getElementById("category3Button").classList.add('btn-outline-secondary')
         } 
         if (Global.isHost){
             chooseCategory(categories.categories)

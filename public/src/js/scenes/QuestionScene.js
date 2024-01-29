@@ -83,12 +83,6 @@ export default class QuestionScene extends Phaser.Scene {
       const cameraWidth = self.cameras.main.width
       const cameraHeight = self.cameras.main.height
 
-      self.scene.launch("UIScene");
-      self.scene.get("UIScene").scene.setVisible(true);
-      self.scene.get("UIScene").scene.bringToTop();
-      self.scene.launch("BackgroundScene");
-      self.scene.get("BackgroundScene").scene.setVisible(true);
-      self.scene.get("BackgroundScene").scene.sendToBack();
 
       const question_background = self.add.image(0, 0, 'question_background')
       .setOrigin(0)
@@ -104,13 +98,11 @@ export default class QuestionScene extends Phaser.Scene {
       // HTML element placement & setup
       elementQuestionSceneHTML = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('questionSceneHTML');
 
-      htmlElementList.push("headerQuestion");
 
       var progressBarBehindQuestion = new MyDOMElement(self, 470, 412, elementQuestionSceneHTML.getChildByID("progressBarBehindQuestion")); 
       progressBarBehindQuestion.setOrigin(0, 0);
-      progressBarQuestion = new MyDOMElement(self, 474, 415, elementQuestionSceneHTML.getChildByID("progressBarQuestion")); 
+      progressBarQuestion = new MyDOMElement(self, 470, 412, elementQuestionSceneHTML.getChildByID("progressBarQuestion")); 
       progressBarQuestion.setOrigin(0, 0);
-      console.log(questionHeader);
       if (Global.isHost){
         progressBarMovement(progressBarStart, progressBarIntervall);  
       }
@@ -180,7 +172,6 @@ export default class QuestionScene extends Phaser.Scene {
         answer2Button.setInnerText(shuffleAnswers_s[1]);
         answer3Button.setInnerText(shuffleAnswers_s[2]);
         answer4Button.setInnerText(shuffleAnswers_s[3]);
-        questionHeader.setInnerText(currentQuestion_s.category);
         questionDiv.setInnerText(currentQuestion_s.question);
       });
 
@@ -216,30 +207,28 @@ export default class QuestionScene extends Phaser.Scene {
         currentQuestionRound.setText('Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES + " and Question: " + (Global.currentQuestionsPerCategoryAmount+1) + "/" + CONFIG.MAX_QUESTIONS_PER_CATEGORY);
         chosenAnswer = "NO_ANSWER";
         chosenButton = 0;
-        document.getElementById("answer1Button").style.backgroundColor = "#D5D5D5"
-        document.getElementById("answer1Button").style.color = "black"
-        document.getElementById("dot1").style.backgroundColor = "#de7f09"
-        document.getElementById("dot1").style.color = "white"
-        document.getElementById("answer2Button").style.backgroundColor = "#D5D5D5"
-        document.getElementById("answer2Button").style.color = "black"
-        document.getElementById("dot2").style.backgroundColor = "#de7f09"
-        document.getElementById("dot2").style.color = "white"
-        document.getElementById("answer3Button").style.backgroundColor = "#D5D5D5"
-        document.getElementById("answer3Button").style.color = "black"
-        document.getElementById("dot3").style.backgroundColor = "#de7f09"
-        document.getElementById("dot3").style.color = "white"
-        document.getElementById("answer4Button").style.backgroundColor = "#D5D5D5"
-        document.getElementById("answer4Button").style.color = "black"
-        document.getElementById("dot4").style.backgroundColor = "#de7f09"
-        document.getElementById("dot4").style.color = "white"
-        document.getElementById("answer1Button").style.width = "370px";
-        document.getElementById("answer2Button").style.width = "370px";
-        document.getElementById("answer3Button").style.width = "370px";
-        document.getElementById("answer4Button").style.width = "370px";
+        
+        document.getElementById("answer1Button").classList.remove('btn-outline-success')
+        document.getElementById("answer1Button").classList.remove('btn-outline-danger')
+        document.getElementById("answer1Button").classList.add('btn-outline-secondary')
+
+        document.getElementById("answer2Button").classList.remove('btn-outline-success')
+        document.getElementById("answer2Button").classList.remove('btn-outline-danger')
+        document.getElementById("answer2Button").classList.add('btn-outline-secondary')
+
+        document.getElementById("answer3Button").classList.remove('btn-outline-success')
+        document.getElementById("answer3Button").classList.remove('btn-outline-danger')
+        document.getElementById("answer3Button").classList.add('btn-outline-secondary')
+
+        document.getElementById("answer4Button").classList.remove('btn-outline-success')
+        document.getElementById("answer4Button").classList.remove('btn-outline-danger')
+        document.getElementById("answer4Button").classList.add('btn-outline-secondary')
 
       });
 
       socket.on('backToCategoryGame', function(){
+        player1ProfilePopUp.setPosition(-100, -100);
+        player2ProfilePopUp.setPosition(-100, -100);
         chosenAnswer = "NO_ANSWER";
         chosenButton = 0;
         availableQuestionList.splice(0,availableQuestionList.length)
@@ -249,14 +238,9 @@ export default class QuestionScene extends Phaser.Scene {
         document.getElementById("answer2Button").style.visibility = "hidden";
         document.getElementById("answer3Button").style.visibility = "hidden";
         document.getElementById("answer4Button").style.visibility = "hidden";
-        document.getElementById("headerQuestion").style.visibility = "hidden";
-        document.getElementById("dot1").style.visibility = "hidden";
-        document.getElementById("dot2").style.visibility = "hidden";
-        document.getElementById("dot3").style.visibility = "hidden";
-        document.getElementById("dot4").style.visibility = "hidden";
+    
         document.getElementById("progressBarBehindQuestion").style.visibility = "hidden";
-        document.getElementById("topline").style.visibility = "hidden";
-
+    
         self.scene.setVisible(false);
         self.scene.setActive(false);
         self.scene.get('CategoryChoiceScene').scene.setVisible(true);
@@ -265,19 +249,14 @@ export default class QuestionScene extends Phaser.Scene {
       });
       socket.on('endGameSceneGame', function(){
 
-        document.getElementById("categoryDiv").style.visibility = "hidden";
         document.getElementById("questionDiv").style.visibility = "hidden";
         document.getElementById("answer1Button").style.visibility = "hidden";
         document.getElementById("answer2Button").style.visibility = "hidden";
         document.getElementById("answer3Button").style.visibility = "hidden";
         document.getElementById("answer4Button").style.visibility = "hidden";
-        document.getElementById("headerQuestion").style.visibility = "hidden";
-        document.getElementById("dot1").style.visibility = "hidden";
-        document.getElementById("dot2").style.visibility = "hidden";
-        document.getElementById("dot3").style.visibility = "hidden";
-        document.getElementById("dot4").style.visibility = "hidden";
+
+
         document.getElementById("progressBarBehindQuestion").style.visibility = "hidden";
-        document.getElementById("topline").style.visibility = "hidden";
 
         self.scene.setVisible(false);
         self.scene.setActive(false);
@@ -285,29 +264,35 @@ export default class QuestionScene extends Phaser.Scene {
       });
       socket.on('tellAnswerToOpponentGame', function(opponentChosenAnswer, sendbyHost){
         var ypos = 0;
+        var xpos = 0;
         if (opponentChosenAnswer == 1){ 
-          ypos = 450;
+          xpos = 50;
+          ypos = 470;
         }
         else if (opponentChosenAnswer == 2){
-          ypos = 530;
+          xpos = 665;
+          ypos = 470;
         }
         else if (opponentChosenAnswer == 3){
-          ypos = 610;
+          xpos = 50;
+          ypos = 590;
         }
         else if (opponentChosenAnswer == 4){
-          ypos = 690;
-
+          xpos = 665;
+          ypos = 590;
+         
         }
         else {
           ypos = -100;
+          xpos= -100;
 
         }
 
         if (sendbyHost){
-          player1ProfilePopUp.setPosition(350, ypos);
+          player1ProfilePopUp.setPosition(xpos, ypos);
         }
         else{
-          player2ProfilePopUp.setPosition(350, ypos);
+          player2ProfilePopUp.setPosition(xpos, ypos);
         }
       });
       
@@ -335,30 +320,25 @@ export default class QuestionScene extends Phaser.Scene {
       document.getElementById("answer2Button").style.visibility = "visible";
       document.getElementById("answer3Button").style.visibility = "visible";
       document.getElementById("answer4Button").style.visibility = "visible";
-      document.getElementById("dot1").style.visibility = "visible";
-      document.getElementById("dot2").style.visibility = "visible";
-      document.getElementById("dot3").style.visibility = "visible";
-      document.getElementById("dot4").style.visibility = "visible";
-      document.getElementById("progressBarBehindQuestion").style.visibility = "visible";
-      document.getElementById("headerQuestion").style.visibility = "visible";
-      document.getElementById("topline").style.visibility = "visible";
 
-      document.getElementById("answer1Button").style.backgroundColor = "#D5D5D5"
-      document.getElementById("dot1").style.backgroundColor = "#de7f09"
-      document.getElementById("answer2Button").style.backgroundColor = "#D5D5D5"
-      document.getElementById("dot2").style.backgroundColor = "#de7f09"
-      document.getElementById("answer3Button").style.backgroundColor = "#D5D5D5"
-      document.getElementById("dot3").style.backgroundColor = "#de7f09"
-      document.getElementById("answer4Button").style.backgroundColor = "#D5D5D5"
-      document.getElementById("dot4").style.backgroundColor = "#de7f09"
-      document.getElementById("answer1Button").style.color = "black"
-      document.getElementById("dot1").style.color = "white"
-      document.getElementById("answer2Button").style.color = "black"
-      document.getElementById("dot2").style.color = "white"
-      document.getElementById("answer3Button").style.color = "black"
-      document.getElementById("dot3").style.color = "white"
-      document.getElementById("answer4Button").style.color = "black"
-      document.getElementById("dot4").style.color = "white"
+      document.getElementById("progressBarBehindQuestion").style.visibility = "visible";
+
+     
+      document.getElementById("answer1Button").classList.remove('btn-outline-success')
+      document.getElementById("answer1Button").classList.remove('btn-outline-danger')
+      document.getElementById("answer1Button").classList.add('btn-outline-secondary')
+
+      document.getElementById("answer2Button").classList.remove('btn-outline-success')
+      document.getElementById("answer2Button").classList.remove('btn-outline-danger')
+      document.getElementById("answer2Button").classList.add('btn-outline-secondary')
+
+      document.getElementById("answer3Button").classList.remove('btn-outline-success')
+      document.getElementById("answer3Button").classList.remove('btn-outline-danger')
+      document.getElementById("answer3Button").classList.add('btn-outline-secondary')
+
+      document.getElementById("answer4Button").classList.remove('btn-outline-success')
+      document.getElementById("answer4Button").classList.remove('btn-outline-danger')
+      document.getElementById("answer4Button").classList.add('btn-outline-secondary')
     }
 }
 
@@ -408,7 +388,8 @@ function progressBarMovement(progressBarWidth, Interval){
 
 function checkAnswers(){
   if (chosenAnswer === correct_answer){
-    document.getElementById("answer"+ chosenButton + "Button").style.backgroundColor = "green"
+    document.getElementById("answer"+ chosenButton + "Button").classList.add('btn-outline-success')
+    document.getElementById("answer"+ chosenButton + "Button").classList.remove('btn-outline-secondary')
 
     if (Global.isHost){
       socket.emit('increaseScoreServer', true);
@@ -422,8 +403,10 @@ function checkAnswers(){
     console.log("No answer selected!")
   }
   else{
-    document.getElementById("answer" + correctAnswerButton + "Button").style.backgroundColor = "#94e294"
-    document.getElementById("answer"+ chosenButton + "Button").style.backgroundColor = "red"
+    document.getElementById("answer"+ correctAnswerButton + "Button").classList.add('btn-outline-success')
+    document.getElementById("answer"+ correctAnswerButton + "Button").classList.remove('btn-outline-secondary')
+    document.getElementById("answer"+ chosenButton + "Button").classList.add('btn-outline-danger')
+    document.getElementById("answer"+ chosenButton + "Button").classList.remove('btn-outline-secondary')
     console.log("Wrong answer selected!")
   }
   Global.currentQuestionsOverallAmount = Global.currentQuestionsOverallAmount + 1;
@@ -438,6 +421,8 @@ function checkAnswers(){
   
     if (Global.currentQuestionsOverallAmount == CONFIG.MAX_QUESTIONS_OVERALL){
       if(Global.isHost){
+        player1ProfilePopUp.setPosition(-100, -100);
+        player2ProfilePopUp.setPosition(-100, -100);
         socket.emit('endGameSceneServer');
       }
     }
@@ -446,6 +431,8 @@ function checkAnswers(){
       
       Global.currentCategoryAmount = Global.currentCategoryAmount +1;
       if(Global.isHost){
+        player1ProfilePopUp.setPosition(-100, -100);
+        player2ProfilePopUp.setPosition(-100, -100);
         socket.emit('backToCategoryServer');
       }
 
@@ -465,26 +452,22 @@ function checkAnswers(){
 
 }
 function setAndClearButtonColor(setId, clearId1, clearId2, clearId3){
-  document.getElementById("answer"+ setId + "Button").style.backgroundColor = "#de7f09"
-  document.getElementById("answer"+ setId + "Button").style.boxShadow = "inset 2px 2px 2px rgba(255, 255, 255, .4), inset -2px -2px 2px rgba(0, 0, 0, .4)"
-  document.getElementById("answer"+ setId + "Button").style.color = "white"
 
-  document.getElementById("dot"+ setId).style.backgroundColor = "#D5D5D5"
-  document.getElementById("dot"+ setId).style.color = "black"
+  document.getElementById("answer"+ setId + "Button").classList.add('btn-outline-success')
+  document.getElementById("answer"+ setId + "Button").classList.remove('btn-outline-secondary')
 
-  document.getElementById("answer"+ clearId1 + "Button").style.backgroundColor = "#D5D5D5"
-  document.getElementById("answer"+ clearId1 + "Button").style.color = "black"
-  document.getElementById("dot"+ clearId1).style.backgroundColor = "#de7f09"
-  document.getElementById("dot"+ clearId1).style.color = "white"
 
-  document.getElementById("answer"+ clearId2 + "Button").style.backgroundColor = "#D5D5D5"
-  document.getElementById("answer"+ clearId2 + "Button").style.color = "black"
-  document.getElementById("dot"+ clearId2).style.backgroundColor = "#de7f09"
-  document.getElementById("dot"+ clearId2).style.color = "white"
+  document.getElementById("answer"+ clearId1 + "Button").classList.remove('btn-outline-success')
+  document.getElementById("answer"+ clearId1 + "Button").classList.add('btn-outline-secondary')
 
-  document.getElementById("answer"+ clearId3 + "Button").style.backgroundColor = "#D5D5D5"
-  document.getElementById("answer"+ clearId3 + "Button").style.color = "black"
-  document.getElementById("dot"+ clearId3).style.backgroundColor = "#de7f09"
-  document.getElementById("dot"+ clearId3).style.color = "white"
+  
+  document.getElementById("answer"+ clearId2 + "Button").classList.remove('btn-outline-success')
+  document.getElementById("answer"+ clearId2 + "Button").classList.add('btn-outline-secondary')
+
+
+  document.getElementById("answer"+ clearId3 + "Button").classList.remove('btn-outline-success')
+  document.getElementById("answer"+ clearId3 + "Button").classList.add('btn-outline-secondary')
+
+ 
 
 };

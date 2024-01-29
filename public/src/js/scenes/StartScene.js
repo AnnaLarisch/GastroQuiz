@@ -67,11 +67,15 @@ export default class StartScene extends Phaser.Scene {
         if (playerReady){
           playerReady = false;
           document.getElementById("startbutton").innerHTML = "Nicht Bereit!";
+          document.getElementById("startbutton").classList.remove('btn-outline-primary')
+          document.getElementById("startbutton").classList.add('btn-outline-secondary')
 
         }
         else{
           playerReady = true;
           document.getElementById("startbutton").innerHTML = "Bereit!";
+          document.getElementById("startbutton").classList.add('btn-outline-primary')
+          document.getElementById("startbutton").classList.remove('btn-outline-secondary')
         }
         socket.emit('setPlayerReadyServer', playerReady);
       });
