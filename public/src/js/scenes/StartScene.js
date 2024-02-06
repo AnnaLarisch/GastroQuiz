@@ -44,6 +44,9 @@ export default class StartScene extends Phaser.Scene {
       self.scene.launch("UIScene");
       self.scene.get("UIScene").scene.setVisible(true);
       self.scene.get("UIScene").scene.bringToTop();
+      self.scene.launch("ReactionScene");
+      self.scene.get("ReactionScene").scene.setVisible(true);
+      self.scene.get("ReactionScene").scene.bringToTop();
       self.scene.launch("BackgroundScene");
       self.scene.get("BackgroundScene").scene.setVisible(true);
       self.scene.get("BackgroundScene").scene.sendToBack();
