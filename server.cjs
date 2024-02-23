@@ -159,6 +159,13 @@ io.on('connection', function (socket) {
   });
 
 
+  //Reaction Scene
+  socket.on('sendEmoji', function(emojiType){
+    console.log(emojiType)
+    var x = Math.floor(Math.random() * 1000) + 100; 
+    var y = Math.floor(Math.random() * 500) + 100; 
+    io.in('game').emit('reactWithEmoji', emojiType, x, y);
+  });
 });
 
 
@@ -175,7 +182,7 @@ function getPlayer(socket){
 // Server listens on port 80 for join requests
 // use 8081 for localhost testing and 80 for heroku server testing
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8081;
 
 
 server.listen(PORT, function () {

@@ -19,12 +19,10 @@ var category2Button;
 var category3Button;
 var header;
 var headerContent;
-var player1Backsprite;
-var player1ProfileIcon;
 var player1Text;
-var player2Backsprite; 
-var player2ProfileIcon;
+var player1PointsText;
 var player2Text;
+var player2PointsText;
 var playerTurnDiv;
 var playerTurnText;
 
@@ -60,7 +58,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
     preload() {
         this.load.html('categoryChoiceSceneHTML', 'src/html/CategoryChoiceScene.html');
         this.load.image('profile_icon', 'assets/scenes/CategoryChoiceScene/placeholder_profile_icon.png')
-        this.load.image('category_choice_bg', 'assets/scenes/CategoryChoiceScene/category_choice_background.png')
+        //this.load.image('category_choice_bg', 'assets/scenes/CategoryChoiceScene/category_choice_background.png')
 
     }
     
@@ -79,10 +77,10 @@ export default class CategoryChoiceScene extends Phaser.Scene {
             chooseCategory(categories.categories);
         }
 
-        const category_choice_bg = self.add.image(0, 0, 'category_choice_bg')
-        .setOrigin(0)
+      //  const category_choice_bg = self.add.image(0, 0, 'category_choice_bg')
+        //.setOrigin(0)
 
-        category_choice_bg.setScale(Math.max(cameraWidth / category_choice_bg.width, cameraHeight / category_choice_bg.height));
+        //category_choice_bg.setScale(Math.max(cameraWidth / category_choice_bg.width, cameraHeight / category_choice_bg.height));
 
 
         // HTML element placement & setup
@@ -98,14 +96,20 @@ export default class CategoryChoiceScene extends Phaser.Scene {
       
       
       
-        player1Text = new MyDOMElement(self, 170, 200, elementCategoryChoiceSceneHTML.getChildByID("player1Text"));
-        player1Text.setInnerText(Global.playerOneName + "\nPunkte: "+ Global.playerOneScore)
+        player1Text = new MyDOMElement(self, 270, 130, elementCategoryChoiceSceneHTML.getChildByID("player1Text"));
+        player1Text.setInnerText(Global.playerOneName )
         player1Text.setOrigin(0,0);
+        player1PointsText = new MyDOMElement(self, 270, 150, elementCategoryChoiceSceneHTML.getChildByID("player1TextPunkte"));
+        player1PointsText.setInnerText("\nPunkte: "+ Global.playerOneScore)
+        player1PointsText.setOrigin(0,0);
 
 
-        player2Text = new MyDOMElement(self, 865, 200, elementCategoryChoiceSceneHTML.getChildByID("player2Text"));
-        player2Text.setInnerText(Global.playerTwoName + "\nPunkte: "+ Global.playerTwoScore)  
+        player2Text = new MyDOMElement(self, 765, 130, elementCategoryChoiceSceneHTML.getChildByID("player2Text"));
+        player2Text.setInnerText(Global.playerTwoName )  
         player2Text.setOrigin(0,0);
+        player2PointsText = new MyDOMElement(self, 765, 150, elementCategoryChoiceSceneHTML.getChildByID("player2TextPunkte"));
+        player2PointsText.setInnerText("\nPunkte: "+ Global.playerTwoScore)
+        player2PointsText.setOrigin(0,0);
 
 
         playerTurnText = new MyDOMElement(self, 530, 445, elementCategoryChoiceSceneHTML.getChildByID("playerTurnText"));
