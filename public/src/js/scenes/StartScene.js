@@ -13,7 +13,7 @@ const socket = getSocket();
 var elementStartSceneHTML;
 var startbutton;
 var groupnameinput;
-
+var waitingtext;
 
 // Phaser game element variables
 var currentConnectedPlayersText;
@@ -35,12 +35,13 @@ export default class StartScene extends Phaser.Scene {
     
     create() {
       
-      // Scene management
+      // <Scene Management> 
       self = this;
       const cameraWidth = self.cameras.main.width
       const cameraHeight = self.cameras.main.height
+      // </Scene Management> 
 
-      // Launch UI scene and Background scene
+      // <Launch UI Scene, Reaction Scene, Background Scene>
       self.scene.launch("UIScene");
       self.scene.get("UIScene").scene.setVisible(true);
       self.scene.get("UIScene").scene.bringToTop();
@@ -50,14 +51,19 @@ export default class StartScene extends Phaser.Scene {
       self.scene.launch("BackgroundScene");
       self.scene.get("BackgroundScene").scene.setVisible(true);
       self.scene.get("BackgroundScene").scene.sendToBack();
+      // </Launch UI Scene, Reaction Scene, Background Scene>
 
-      // HTML element placement & setup
+      // <Place HTML DOM Elements>
       elementStartSceneHTML  = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('startSceneHTML');
       
       groupnameinput = new MyDOMElement(self, 360, 500, elementStartSceneHTML.getChildByID("group_name")); 
       groupnameinput.setOrigin(0,0);
       startbutton = new MyDOMElement(self, 360, 550, elementStartSceneHTML.getChildByID("startbutton")); 
       startbutton.setOrigin(0,0).addListener('click');
+      waitingtext = new MyDOMElement(self, 360, 630, elementStartSceneHTML.getChildByID("waitingInfo")); 
+      waitingtext.setOrigin(0,0);
+      // </Place HTML DOM Elements>
+
 
       // Phaser game element placement & setup
 
@@ -73,18 +79,17 @@ export default class StartScene extends Phaser.Scene {
       startbutton.on('click', function (pointer){
         if (playerReady){
           playerReady = false;
-          document.getElementById("startbutton").innerHTML = "Nicht Bereit!";
-          document.getElementById("startbutton").classList.remove('btn-outline-primary')
-          document.getElementById("startbutton").classList.add('btn-outline-secondary')
+          document.getElementById("startbutton").classList.remove('btn-dark')
+          document.getElementById("startbutton").classList.add('btn-outline-dark')
 
         }
         else{
           playerReady = true;
-          document.getElementById("startbutton").innerHTML = "Bereit!";
-          document.getElementById("startbutton").classList.add('btn-outline-primary')
-          document.getElementById("startbutton").classList.remove('btn-outline-secondary')
+          document.getElementById("startbutton").classList.add('btn-dark')
+          document.getElementById("startbutton").classList.remove('btn-outline-dark')
         }
         socket.emit('setPlayerReadyServer', playerReady);
+        socket.emit('notifyReadyServer', playerReady, Global,isHost);
       });
 
 
@@ -121,7 +126,8 @@ export default class StartScene extends Phaser.Scene {
         groupnameinput.destroy();
         startbutton.destroy();
         self.scene.launch("CategoryChoiceScene");
-       
+        //self.scene.launch("ChatScene");
+
 
         self.scene.get("StartScene").scene.setVisible(false);
         self.scene.get("StartScene").scene.setActive(false);

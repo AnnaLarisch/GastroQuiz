@@ -3,6 +3,7 @@ import CategoryChoiceScene from './src/js/scenes/CategoryChoiceScene.js';
 import QuestionScene from './src/js/scenes/QuestionScene.js';
 import UIScene from './src/js/scenes/UIScene.js';
 import ReactionScene from './src/js/scenes/ReactionScene.js';
+import ChatScene from './src/js/scenes/ChatScene.js';
 import SettingsScene from './src/js/scenes/SettingsScene.js';
 import CreditsScene from './src/js/scenes/CreditsScene.js';
 import ScoreScene from './src/js/scenes/ScoreScene.js';
@@ -40,7 +41,7 @@ var config = {
         gravity: { y: CONFIG.DEFAULT_GRAVITY }
       }
     },
-    scene: [SocketIOScene, StartScene, UIScene, ReactionScene, SettingsScene, CreditsScene, ScoreScene, CategoryChoiceScene, QuestionScene, GameFullScene, BackgroundScene]
+    scene: [SocketIOScene, StartScene, UIScene, ReactionScene, ChatScene, SettingsScene, CreditsScene, ScoreScene, CategoryChoiceScene, QuestionScene, GameFullScene, BackgroundScene]
     //scene: [QuestionScene, CategoryChoiceScene, SocketIOScene, StartScene, UIScene, SettingsScene, CreditsScene, ScoreScene]
 
   };

@@ -166,7 +166,18 @@ io.on('connection', function (socket) {
     var y = Math.floor(Math.random() * 500) + 100; 
     io.in('game').emit('reactWithEmoji', emojiType, x, y);
   });
+
+//Chat Scene
+  socket.on('sendOpponentMessage', function(text, isHost){
+    console.log(text, isHost)
+    io.in('game').emit('createOpponentMessage', text, isHost);
+  });
+
 });
+
+
+
+
 
 
 function getPlayer(socket){

@@ -57,6 +57,8 @@ var usedQuestions = [];
 var opponentPortrait;
 var player1ProfilePopUp;
 var player2ProfilePopUp;
+var checkmarkPopUp;
+var crossPopUp;
 var correctAnswerButtonHere;
 var correctAnswerButton;
 
@@ -84,10 +86,10 @@ export default class QuestionScene extends Phaser.Scene {
       const cameraHeight = self.cameras.main.height
 
 
-      const question_background = self.add.image(0, 0, 'question_background')
-      .setOrigin(0)
+      //const question_background = self.add.image(0, 0, 'question_background')
+      //.setOrigin(0)
 
-      question_background.setScale(Math.max(cameraWidth / question_background.width, cameraHeight / question_background.height));
+      //question_background.setScale(Math.max(cameraWidth / question_background.width, cameraHeight / question_background.height));
 
 
       // Question selection
@@ -109,10 +111,10 @@ export default class QuestionScene extends Phaser.Scene {
 
 
 
-      questionDiv = new MyDOMElement(self, 200, 135, elementQuestionSceneHTML.getChildByID("questionDiv"), null, "Current Question"); 
+      questionDiv = new MyDOMElement(self, 300, 135, elementQuestionSceneHTML.getChildByID("questionDiv"), null, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat."); 
       questionDiv.setOrigin(0, 0);
 
-      answer1Button = new MyDOMElement(self, 50, 500, elementQuestionSceneHTML.getChildByID("answer1Button"), null, "Answer 1"); 
+      answer1Button = new MyDOMElement(self, 50, 500, elementQuestionSceneHTML.getChildByID("answer1Button"), null, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat"); 
       answer2Button = new MyDOMElement(self, 665, 500, elementQuestionSceneHTML.getChildByID("answer2Button"), null, "Answer 2"); 
       answer3Button = new MyDOMElement(self, 50, 620, elementQuestionSceneHTML.getChildByID("answer3Button"), null, "Answer 3"); 
       answer4Button = new MyDOMElement(self, 665, 620, elementQuestionSceneHTML.getChildByID("answer4Button"), null, "Answer 4"); 
@@ -126,6 +128,9 @@ export default class QuestionScene extends Phaser.Scene {
 
       player1ProfilePopUp = new MyDOMElement(self, -100, -100, elementQuestionSceneHTML.getChildByID("player1IconPopup"));
       player2ProfilePopUp = new MyDOMElement(self, -100, -100, elementQuestionSceneHTML.getChildByID("player2IconPopup"));
+
+      checkmarkPopUp = new MyDOMElement(self, -100, -100, elementQuestionSceneHTML.getChildByID("checkmarkIcon"));
+      crossPopUp = new MyDOMElement(self, -100, -100, elementQuestionSceneHTML.getChildByID("crossIcon"));
 
       // Phaser game element placement & setup
 
@@ -229,6 +234,8 @@ export default class QuestionScene extends Phaser.Scene {
       socket.on('backToCategoryGame', function(){
         player1ProfilePopUp.setPosition(-100, -100);
         player2ProfilePopUp.setPosition(-100, -100);
+        checkmarkPopUp.setPosition(-100, -100);
+        crossPopUp.setPosition(-100, -100);
         chosenAnswer = "NO_ANSWER";
         chosenButton = 0;
         availableQuestionList.splice(0,availableQuestionList.length)
@@ -387,9 +394,59 @@ function progressBarMovement(progressBarWidth, Interval){
 }
 
 function checkAnswers(){
+    var chosenxpos = 0;
+    var chosenypos = 0;
+    
+    if (chosenButton == 1){ 
+      chosenxpos = 150;
+      chosenypos = 470;
+    }
+    else if (chosenButton == 2){
+      chosenxpos = 765;
+      chosenypos = 470;
+    }
+    else if (chosenButton == 3){
+      chosenxpos = 150;
+      chosenypos = 590;
+    }
+    else if (chosenButton == 4){
+      chosenxpos = 765;
+      chosenypos = 590;
+     
+    }
+    else {
+      chosenxpos = -100;
+      chosenypos= -100;
+    }
+
+    var correctxpos = 0;
+    var correctypos = 0;
+    
+    if (correctAnswerButton == 1){ 
+      correctxpos = 150;
+      correctypos = 470;
+    }
+    else if (correctAnswerButton == 2){
+      correctxpos = 765;
+      correctypos = 470;
+    }
+    else if (correctAnswerButton == 3){
+      correctxpos = 150;
+      correctypos = 590;
+    }
+    else if (correctAnswerButton == 4){
+      correctxpos = 765;
+      correctypos = 590;
+     
+    }
+
   if (chosenAnswer === correct_answer){
     document.getElementById("answer"+ chosenButton + "Button").classList.add('btn-outline-success')
     document.getElementById("answer"+ chosenButton + "Button").classList.remove('btn-outline-secondary')
+    
+
+    checkmarkPopUp.setPosition(chosenxpos, chosenypos);
+
 
     if (Global.isHost){
       socket.emit('increaseScoreServer', true);
@@ -408,6 +465,9 @@ function checkAnswers(){
     document.getElementById("answer"+ chosenButton + "Button").classList.add('btn-outline-danger')
     document.getElementById("answer"+ chosenButton + "Button").classList.remove('btn-outline-secondary')
     console.log("Wrong answer selected!")
+    crossPopUp.setPosition(chosenxpos, chosenypos);
+    checkmarkPopUp.setPosition(correctxpos, correctxpos);
+
   }
   Global.currentQuestionsOverallAmount = Global.currentQuestionsOverallAmount + 1;
   Global.currentQuestionsPerCategoryAmount = Global.currentQuestionsPerCategoryAmount + 1;
@@ -447,12 +507,18 @@ function checkAnswers(){
     }
     player1ProfilePopUp.setPosition(-100, -100);
     player2ProfilePopUp.setPosition(-100, -100);
+    checkmarkPopUp.setPosition(-100, -100);
+    crossPopUp.setPosition(-100, -100);
     clearTimeout(answerGivenTimeout);
     player1ProfilePopUp.setPosition(-100, -100);
     player2ProfilePopUp.setPosition(-100, -100);
+    checkmarkPopUp.setPosition(-100, -100);
+    crossPopUp.setPosition(-100, -100);
 }, 2000);
     player1ProfilePopUp.setPosition(-100, -100);
     player2ProfilePopUp.setPosition(-100, -100);
+    checkmarkPopUp.setPosition(-100, -100);
+    crossPopUp.setPosition(-100, -100);
 
 }
 function setAndClearButtonColor(setId, clearId1, clearId2, clearId3){
