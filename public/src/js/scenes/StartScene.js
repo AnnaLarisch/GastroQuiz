@@ -60,7 +60,7 @@ export default class StartScene extends Phaser.Scene {
       groupnameinput.setOrigin(0,0);
       startbutton = new MyDOMElement(self, 360, 550, elementStartSceneHTML.getChildByID("startbutton")); 
       startbutton.setOrigin(0,0).addListener('click');
-      waitingtext = new MyDOMElement(self, 360, 630, elementStartSceneHTML.getChildByID("waitingInfo")); 
+      waitingtext = new MyDOMElement(self, 550, 630, elementStartSceneHTML.getChildByID("waitingInfo")); 
       waitingtext.setOrigin(0,0);
       // </Place HTML DOM Elements>
 
@@ -89,7 +89,7 @@ export default class StartScene extends Phaser.Scene {
           document.getElementById("startbutton").classList.remove('btn-outline-dark')
         }
         socket.emit('setPlayerReadyServer', playerReady);
-        socket.emit('notifyReadyServer', playerReady, Global,isHost);
+        socket.emit('notifyReadyServer', playerReady, Global.isHost);
       });
 
 
@@ -125,12 +125,14 @@ export default class StartScene extends Phaser.Scene {
         }
         groupnameinput.destroy();
         startbutton.destroy();
+        waitingtext.destroy();
         self.scene.launch("CategoryChoiceScene");
         //self.scene.launch("ChatScene");
 
 
         self.scene.get("StartScene").scene.setVisible(false);
         self.scene.get("StartScene").scene.setActive(false);
+        self.scene.get("ReactionScene").scene.bringToTop();
 
       });
 
@@ -158,6 +160,31 @@ export default class StartScene extends Phaser.Scene {
       socket.on('setPlayerTwoNameGlobal', function(name){
         Global.playerTwoName = name;
 
+      });
+
+      socket.on('notifyReadyPlayers', function(isReady, isHost){
+        if (isHost == true){
+          if(Global.isHost == false){
+            if(isReady){
+              waitingtext.setText("Gegnerisches Team is bereit!")
+            }
+            if(!isReady){
+              waitingtext.setText("Warten auf gegnerisches Team...")
+            }
+          }
+        }
+
+        if (isHost == false){
+          if(Global.isHost == true){
+            if(isReady){
+              waitingtext.setText("Gegnerisches Team is bereit!")
+            }
+            if(!isReady){
+              waitingtext.setText("Warten auf gegnerisches Team...")
+            }
+          }
+        }
+        
       });
 
     }

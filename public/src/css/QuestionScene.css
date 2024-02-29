@@ -1,20 +1,4 @@
-html {
-    font-size: 10px;
-  }
 
-.btn {
-  
-  font-size: 2rem;
-  font-weight: bold;
-  color: rgb(0, 0, 0);
-
-  }
-
-.btn2{
-  font-size: 2rem;
-  font-weight: bold;
-  color: rgb(0, 0, 0);
-}
 
 
   
@@ -36,19 +20,9 @@ html {
     text-emphasis: black;
 }
 
-.answerDiv{
-    font-weight: bold;
-      font-size: 1.5rem;
-      padding: 20px; /* Adds some padding inside the div */
-      text-align: center; /* Centers the text horizontally */
-      font-family: Arial, sans-serif; /* Sets the font style */
-      background-color: #fff; /* White background */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds shadow for better visibility */
-      border-radius: 10px; /* Optional: rounds the corners */
-      text-emphasis: black;
+.categoryButton{
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 #progressBarBehindQuestion {

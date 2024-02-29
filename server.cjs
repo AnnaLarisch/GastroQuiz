@@ -107,6 +107,10 @@ io.on('connection', function (socket) {
     }
   });
 
+  socket.on('notifyReadyServer', function (isReady, isHost){
+    io.in('game').emit('notifyReadyPlayers',isReady, isHost);
+  });
+
 
   // Category Choice Scene
 

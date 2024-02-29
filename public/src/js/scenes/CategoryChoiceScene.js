@@ -17,23 +17,17 @@ var elementCategoryChoiceSceneHTML;
 var category1Button;
 var category2Button;
 var category3Button;
-var header;
-var headerContent;
+
 var player1Text;
 var player1PointsText;
 var player2Text;
 var player2PointsText;
-var playerTurnDiv;
 var playerTurnText;
 
-// Phaser game element variables
-var profileIconPlayer1;
-var profileIconPlayer2;
-var playerOneScoreText;
-var playerTwoScoreText;
-var playerOneNameText;
-var playerTwoNameText;
-var chooseCategoryText;
+var versusText;
+var currentRoundText;
+
+
 
 // Choosing category variables
 var categoryList;
@@ -87,15 +81,15 @@ export default class CategoryChoiceScene extends Phaser.Scene {
 
         elementCategoryChoiceSceneHTML  = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('categoryChoiceSceneHTML');
              
-        category1Button = new MyDOMElement(self, 50, 500, elementCategoryChoiceSceneHTML.getChildByID("category1Button"), null, "Category"); 
+        category1Button = new MyDOMElement(self, 260, 500, elementCategoryChoiceSceneHTML.getChildByID("category1Button"), null, "Category"); 
         category2Button = new MyDOMElement(self, 665, 500, elementCategoryChoiceSceneHTML.getChildByID("category2Button"), null, "Category"); 
-        category3Button = new MyDOMElement(self, 360, 620, elementCategoryChoiceSceneHTML.getChildByID("category3Button"), null, "Category");
+        category3Button = new MyDOMElement(self, 460, 620, elementCategoryChoiceSceneHTML.getChildByID("category3Button"), null, "Category");
         category1Button.setOrigin(0,0).addListener('click');
         category2Button.setOrigin(0,0).addListener('click');
         category3Button.setOrigin(0,0).addListener('click');
       
       
-      
+  
         player1Text = new MyDOMElement(self, 270, 130, elementCategoryChoiceSceneHTML.getChildByID("player1Text"));
         player1Text.setInnerText(Global.playerOneName )
         player1Text.setOrigin(0,0);
@@ -112,49 +106,17 @@ export default class CategoryChoiceScene extends Phaser.Scene {
         player2PointsText.setOrigin(0,0);
 
 
-        playerTurnText = new MyDOMElement(self, 530, 445, elementCategoryChoiceSceneHTML.getChildByID("playerTurnText"));
+        playerTurnText = new MyDOMElement(self, 260, 460, elementCategoryChoiceSceneHTML.getChildByID("playerTurnText"));
         playerTurnText.setInnerText("Team " + Global.categoryDecider +" entscheidet!")
         playerTurnText.setOrigin(0,0);
-/*
-        header = new MyDOMElement(self, 0, -50, elementCategoryChoiceSceneHTML.getChildByID("header"));
-        headerContent = new MyDOMElement(self, 0, -50, elementCategoryChoiceSceneHTML.getChildByID("header-content"), null, "GastroQuiz");
-        header.setOrigin(0,0);
-        headerContent.setOrigin(0,0);
 
-        player1Backsprite = new MyDOMElement(self, 11, 130, elementCategoryChoiceSceneHTML.getChildByID("player1Backsprite"));
-        player1ProfileIcon = new MyDOMElement(self, 30, 128, elementCategoryChoiceSceneHTML.getChildByID("player1ProfileIcon"));
-        player1Text = new MyDOMElement(self, 190, 125, elementCategoryChoiceSceneHTML.getChildByID("player1Text"));
-        player1Text.setInnerText(Global.playerOneName +"\nScore: "+ Global.playerOneScore +" / " + Global.currentQuestionsOverallAmount)
-        player1Backsprite.setOrigin(0,0);
-        player1ProfileIcon.setOrigin(0,0);
-        player1Text.setOrigin(0,0);
-
-        player2Backsprite = new MyDOMElement(self, 11, 245, elementCategoryChoiceSceneHTML.getChildByID("player2Backsprite"));
-        player2ProfileIcon = new MyDOMElement(self, 270, 243, elementCategoryChoiceSceneHTML.getChildByID("player2ProfileIcon"));
-        player2Text = new MyDOMElement(self, 24, 240, elementCategoryChoiceSceneHTML.getChildByID("player2Text"));
-        player2Text.setInnerText(Global.playerTwoName +"\nScore: "+ Global.playerTwoScore +" / " + Global.currentQuestionsOverallAmount)
-        player2Backsprite.setOrigin(0,0);
-        player2ProfileIcon.setOrigin(0,0);
-        player2Text.setOrigin(0,0);
-
-        playerTurnDiv = new MyDOMElement(self, 11, 390, elementCategoryChoiceSceneHTML.getChildByID("playerTurnDiv"));
-        playerTurnText = new MyDOMElement(self, 25, 393, elementCategoryChoiceSceneHTML.getChildByID("playerTurnText"));
-        playerTurnText.setInnerText(Global.categoryDecider +" decides on a category: ")
-        playerTurnDiv.setOrigin(0,0);
-        playerTurnText.setOrigin(0,0);
-*/
-    
-      
-        // Phaser game element placement & setup
-        //profileIconPlayer1 = self.physics.add.sprite(30, 40, 'profile_icon').setOrigin(0,0);
-        //profileIconPlayer2 = self.physics.add.sprite(280, 40, 'profile_icon').setOrigin(0,0);
-        //playerOneScoreText = self.add.text(58, 170, Global.playerOneScore, { fontSize: 60 } );
-        //playerTwoScoreText = self.add.text(312, 170, Global.playerTwoScore, { fontSize: 60 } );
-        //playerOneNameText = self.add.text(35, 140, Global.playerOneName, { fontSize: 20 } );
-        //playerTwoNameText = self.add.text(285, 140, Global.playerTwoName, { fontSize: 20 } );
-        //chooseCategoryText = self.add.text(20, 350, Global.categoryDecider + " decides on a category: ", { fontSize: 20 } );
+        versusText = new MyDOMElement(self, 600, 200, elementCategoryChoiceSceneHTML.getChildByID("versusText"));
+        versusText.setOrigin(0,0);
+        currentRoundText = new MyDOMElement(self, 900, 730, elementCategoryChoiceSceneHTML.getChildByID("currentRoundText"));
+        currentRoundText.setInnerText('Runde ' + (Global.currentCategoryAmount+1) + " von " + CONFIG.MAX_CATEGORIES);
+        currentRoundText.setOrigin(0,0);
         
-        currentRound = self.add.text(15, 815, 'Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES);
+        currentRound = self.add.text(15, 815, 'Runde ' + (Global.currentCategoryAmount+1) + " von " + CONFIG.MAX_CATEGORIES);
 
 
         // Player one or Player two decides on a category here 
@@ -224,10 +186,13 @@ export default class CategoryChoiceScene extends Phaser.Scene {
                 // Launch or reactivate scene depending on if the scene was launched beforehand
                 if (!Global.questionSceneLaunched){
                     self.scene.launch("QuestionScene");
+                    self.scene.get("ReactionScene").scene.bringToTop();
+
                 }
                 else{
                     self.scene.get("QuestionScene").scene.setActive(true);
                     self.scene.get("QuestionScene").scene.setVisible(true);
+                    self.scene.get("ReactionScene").scene.bringToTop();
 
                     self.scene.get("QuestionScene").resetQuestion();
                 }
@@ -261,6 +226,7 @@ export default class CategoryChoiceScene extends Phaser.Scene {
         changeCategoryDecider(Global.categoryDecider);
         changeVisibilityList(["playerTurnText","player1Text", "player2Text", "category1Button", "category2Button", "category3Button"], "visible")
         currentRound.setText('Round ' + (Global.currentCategoryAmount+1) + "/" + CONFIG.MAX_CATEGORIES);
+        currentRoundText.setInnerText('Runde ' + (Global.currentCategoryAmount+1) + " von " + CONFIG.MAX_CATEGORIES);
         playerTurnText.setText("Team " + Global.categoryDecider +" entscheidet!");
         player1Text.setText("Punkte: "+ Global.playerOneScore)
         player2Text.setText("Punkte: "+ Global.playerTwoScore)
