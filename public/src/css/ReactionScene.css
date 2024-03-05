@@ -90,3 +90,9 @@
 .fade-out {
     opacity: 0;
 }
+
+#emojiContainer img {
+  width: 100px; /* Example size; adjust as needed */
+  height: auto;
+  transition: opacity 3s ease-out;
+}

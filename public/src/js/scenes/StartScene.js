@@ -14,6 +14,7 @@ var elementStartSceneHTML;
 var startbutton;
 var groupnameinput;
 var waitingtext;
+var connectedTeamstext;
 
 // Phaser game element variables
 var currentConnectedPlayersText;
@@ -42,6 +43,8 @@ export default class StartScene extends Phaser.Scene {
       // </Scene Management> 
 
       // <Launch UI Scene, Reaction Scene, Background Scene>
+ 
+
       self.scene.launch("UIScene");
       self.scene.get("UIScene").scene.setVisible(true);
       self.scene.get("UIScene").scene.bringToTop();
@@ -51,6 +54,7 @@ export default class StartScene extends Phaser.Scene {
       self.scene.launch("BackgroundScene");
       self.scene.get("BackgroundScene").scene.setVisible(true);
       self.scene.get("BackgroundScene").scene.sendToBack();
+  
       // </Launch UI Scene, Reaction Scene, Background Scene>
 
       // <Place HTML DOM Elements>
@@ -60,8 +64,10 @@ export default class StartScene extends Phaser.Scene {
       groupnameinput.setOrigin(0,0);
       startbutton = new MyDOMElement(self, 360, 550, elementStartSceneHTML.getChildByID("startbutton")); 
       startbutton.setOrigin(0,0).addListener('click');
-      waitingtext = new MyDOMElement(self, 550, 630, elementStartSceneHTML.getChildByID("waitingInfo")); 
+      waitingtext = new MyDOMElement(self, 520, 630, elementStartSceneHTML.getChildByID("waitingInfo")); 
       waitingtext.setOrigin(0,0);
+      connectedTeamstext = new MyDOMElement(self, 80, 730, elementStartSceneHTML.getChildByID("connectedTeams")); 
+      connectedTeamstext.setOrigin(0,0);
       // </Place HTML DOM Elements>
 
 
@@ -73,24 +79,44 @@ export default class StartScene extends Phaser.Scene {
 
       title_gastro_quiz.setScale(Math.max(cameraWidth / title_gastro_quiz.width, cameraHeight / title_gastro_quiz.height))
 
-      currentConnectedPlayersText = self.add.text(15, 815, 'Connected: ' + Global.currentConnectedPlayers);
       socket.emit('setPlayerClassServer');
-
+      socket.emit('joinedGameServer');
       startbutton.on('click', function (pointer){
-        if (playerReady){
-          playerReady = false;
-          document.getElementById("startbutton").classList.remove('btn-dark')
-          document.getElementById("startbutton").classList.add('btn-outline-dark')
+        var validPattern = /^[a-zA-ZäöüÄÖÜ0-9-# ]+$/;
+        var input =  document.getElementById("group_name");
 
+        if(validPattern.test(input.value) && input.value.length >= 3) {
+
+   
+
+          if (playerReady){
+            playerReady = false;
+            document.getElementById("startbutton").classList.remove('btn-dark')
+            document.getElementById("startbutton").classList.add('btn-outline-dark')
+
+          }
+          else{
+            playerReady = true;
+            document.getElementById("startbutton").classList.add('btn-dark')
+            document.getElementById("startbutton").classList.remove('btn-outline-dark')
+          }
+          socket.emit('setPlayerReadyServer', playerReady);
+          socket.emit('notifyReadyServer', playerReady, Global.isHost);
+
+        } 
+        else if (validPattern.test(input.value) && input.value.length < 3) {
+          document.getElementById("group_name").value = "Eingabe zu kurz!";
         }
-        else{
-          playerReady = true;
-          document.getElementById("startbutton").classList.add('btn-dark')
-          document.getElementById("startbutton").classList.remove('btn-outline-dark')
-        }
-        socket.emit('setPlayerReadyServer', playerReady);
-        socket.emit('notifyReadyServer', playerReady, Global.isHost);
+        
+        else 
+        {
+        // If the input is invalid, handle the error (e.g., show an error message or clear the input)
+        // Optionally, clear the input or set it to a default value
+        document.getElementById("group_name").value = "Unerlaubte Eingabe!";
+         }
       });
+
+      
 
 
 
@@ -100,7 +126,6 @@ export default class StartScene extends Phaser.Scene {
 
       socket.on('setPlayerClassGame', function(playerCountCurrent){
         Global.currentConnectedPlayers = playerCountCurrent;
-        currentConnectedPlayersText.setText('Connected: ' + Global.currentConnectedPlayers);
         if (Global.currentConnectedPlayers == 1){
           Global.isHost = true;
         }
@@ -111,28 +136,30 @@ export default class StartScene extends Phaser.Scene {
 
       // End start scene and start into category choice scene
       socket.on('startGame', function(){
-        if (Global.isHost){
-          var name = document.getElementById("group_name");
-          Global.playerOneName = name.value;
-          console.log(name.value)
-          socket.emit('setPlayerOneName', name.value);
-        }
-        if (Global.isGuest){
-          var name =  document.getElementById("group_name");
-          Global.playerTwoName = name.value;
-          console.log(name.value)
-          socket.emit('setPlayerTwoName', name.value);
-        }
-        groupnameinput.destroy();
-        startbutton.destroy();
-        waitingtext.destroy();
-        self.scene.launch("CategoryChoiceScene");
-        //self.scene.launch("ChatScene");
+        var name =  document.getElementById("group_name");
 
+          if (Global.isHost){
+            Global.playerOneName = name.value;
+            console.log(name.value)
+            socket.emit('setPlayerOneName', name.value);
+          }
+          if (Global.isGuest){
+            Global.playerTwoName = name.value;
+            console.log(name.value)
+            socket.emit('setPlayerTwoName', name.value);
+          }
+          groupnameinput.destroy();
+          startbutton.destroy();
+          waitingtext.destroy();
+          self.scene.launch("CategoryChoiceScene");
+          //self.scene.launch("ChatScene");
+  
+  
+          self.scene.get("StartScene").scene.setVisible(false);
+          self.scene.get("StartScene").scene.setActive(false);
+          self.scene.get("ReactionScene").scene.bringToTop();
 
-        self.scene.get("StartScene").scene.setVisible(false);
-        self.scene.get("StartScene").scene.setActive(false);
-        self.scene.get("ReactionScene").scene.bringToTop();
+   
 
       });
 
@@ -160,6 +187,11 @@ export default class StartScene extends Phaser.Scene {
       socket.on('setPlayerTwoNameGlobal', function(name){
         Global.playerTwoName = name;
 
+      });
+
+      
+      socket.on('joinedGamePlayers', function(playerCount){
+        connectedTeamstext.setText("Verbunden: " + playerCount + "/2")
       });
 
       socket.on('notifyReadyPlayers', function(isReady, isHost){
@@ -190,6 +222,15 @@ export default class StartScene extends Phaser.Scene {
     }
 
     update() {
+      var entername = document.getElementById("group_name");
+      
+      if (entername.value != "" && Global.currentConnectedPlayers == 2){
+        document.getElementById("startbutton").disabled = false;
+      }
+      else{
+        document.getElementById("startbutton").disabled = true;
+      }
+
 
     }
 }

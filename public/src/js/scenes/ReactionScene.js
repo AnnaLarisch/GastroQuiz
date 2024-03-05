@@ -31,12 +31,16 @@ export default class ReactionScene extends Phaser.Scene {
         const cameraHeight = self.cameras.main.height
         reactionSceneHTML = self.add.dom(0, 0).setOrigin(0, 0).createFromCache('reactionSceneHTML');
 
-
-        var sidebarbutton = new MyDOMElement(self, -2, 0, reactionSceneHTML.getChildByID("sidebarbutton"));
+    
+        var sidebarbutton = new MyDOMElement(self, -500, -500, reactionSceneHTML.getChildByID("sidebarbutton"));
         sidebarbutton.setOrigin(0, 0);
         sidebarbutton.addListener('click');
 
+
         sidebarbutton.on('click', emoteNav)
+
+        var emojicontainer = new MyDOMElement(self, 250, 10, reactionSceneHTML.getChildByID("emojiContainer"));
+        emojicontainer.setOrigin(0, 0);
 
         var emoji_up = new MyDOMElement(self, 10, 90, reactionSceneHTML.getChildByID("emoji_up"));
         var emoji_down = new MyDOMElement(self, 10, 160, reactionSceneHTML.getChildByID("emoji_down"));
@@ -98,7 +102,10 @@ export default class ReactionScene extends Phaser.Scene {
         document.getElementById("emoji_heart_image").style.width = "0px";
         document.getElementById("emoji_poo_image").style.width = "0px";
 
+        socket.on('startReactions', function (){
+            sidebarbutton.setPosition(-2, 0);
 
+        });
 
 
 
@@ -186,40 +193,77 @@ function emoteNav() {
 
 }
 function send_emoji_up() {
-    socket.emit('sendEmoji', "emoji_up");
-    console.log("send_emoji_up");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_up", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_up", Global.guestId, Global.hostId);
+    }    console.log("send_emoji_up");
 }
 function send_emoji_down() {
-    socket.emit('sendEmoji', "emoji_down");
-    console.log("send_emoji_down");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_down", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_down", Global.guestId, Global.hostId);
+    }    console.log("send_emoji_down");
 }
 function send_emoji_laughing() {
-    socket.emit('sendEmoji', "emoji_laughing");
-    console.log("send_emoji_laughing");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_laughing", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_laughing", Global.guestId, Global.hostId);
+    }    console.log("send_emoji_laughing");
 }
 function send_emoji_tear() {
-    socket.emit('sendEmoji', "emoji_tear");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_tear", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_tear", Global.guestId, Global.hostId);
+    }
     console.log("send_emoji_tear");
 }
 function send_emoji_thinking() {
-    socket.emit('sendEmoji', "emoji_thinking");
-    console.log("send_emoji_thinking");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_thinking", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_thinking", Global.guestId, Global.hostId);
+    }    console.log("send_emoji_thinking");
 }
 function send_emoji_nerd() {
-    socket.emit('sendEmoji', "emoji_nerd");
-    console.log("send_emoji_nerd");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_nerd", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_nerd", Global.guestId, Global.hostId);
+    }    console.log("send_emoji_nerd");
 }
 function send_emoji_astonished() {
-    socket.emit('sendEmoji', "emoji_astonished");
-    console.log("send_emoji_astonished");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_astonished", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_astonished", Global.guestId, Global.hostId);
+    }    console.log("send_emoji_astonished");
 }
 function send_emoji_heart() {
-    socket.emit('sendEmoji', "emoji_heart");
-    console.log("send_emoji_heart");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_heart", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_heart", Global.guestId, Global.hostId);
+    }    console.log("send_emoji_heart");
 }
 function send_emoji_poo() {
-    socket.emit('sendEmoji', "emoji_poo");
-    console.log("send_emoji_poo");
+    if (Global.isHost){
+        socket.emit('sendEmoji', "emoji_poo", Global.hostId, Global.guestId);
+    }
+    else{
+        socket.emit('sendEmoji', "emoji_poo", Global.guestId, Global.hostId);
+    }    console.log("send_emoji_poo");
 }
 
 socket.on('reactWithEmoji', function (emoji, x, y) {
@@ -266,5 +310,54 @@ socket.on('reactWithEmoji', function (emoji, x, y) {
     setTimeout(function () {
         img.classList.add('fade-out');
     }, 2000); // Start fading after 2 seconds
+
+});
+
+
+socket.on('displayEmoji', function (emoji) {
+    var emojiImg = document.createElement('img');
+    switch (emoji) {
+        case 'emoji_up':
+            emojiImg.src = "assets/scenes/ReactionScene/up.png"; // Replace with your image path
+            break;
+        case 'emoji_down':
+            emojiImg.src = "assets/scenes/ReactionScene/down.png"; // Replace with your image path
+            break;
+        case 'emoji_laughing':
+            emojiImg.src = "assets/scenes/ReactionScene/laughing.png"; // Replace with your image path
+            break;
+        case 'emoji_tear':
+            emojiImg.src = "assets/scenes/ReactionScene/tear.png"; // Replace with your image path
+            break;
+        case 'emoji_thinking':
+            emojiImg.src = "assets/scenes/ReactionScene/thinking.png"; // Replace with your image path
+            break;
+        case 'emoji_nerd':
+            emojiImg.src = "assets/scenes/ReactionScene/nerd.png"; // Replace with your image path
+            break;
+        case 'emoji_astonished':
+            emojiImg.src = "assets/scenes/ReactionScene/astonished.png"; // Replace with your image path
+            break;
+        case 'emoji_heart':
+            emojiImg.src = "assets/scenes/ReactionScene/heart.png"; // Replace with your image path
+            break;
+        case 'emoji_poo':
+            emojiImg.src = "assets/scenes/ReactionScene/poo.png"; // Replace with your image path
+            break;
+        default:
+            console.log('no emoji');
+    }
+    emojiImg.style.height = "50px"
+    emojiImg.style.width = "50px"
+   
+    const container = document.getElementById('emojiContainer');
+    if (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    container.appendChild(emojiImg);
+
+    setTimeout(() => {
+        emojiImg.classList.add('fade-out');
+    }, 3000);
 
 });

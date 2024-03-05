@@ -4,20 +4,23 @@
   
 
 #questionDiv {
-  font-weight: bold;
+    font-weight: bold;
     font-size: 2rem;
     padding: 20px; /* Adds some padding inside the div */
     text-align: center; /* Centers the text horizontally */
     font-family: Arial, sans-serif; /* Sets the font style */
     height: 25vh; /* 40% of the viewport height */
     width: 40vw; /* 60% of the viewport width */
-    background-color: #fff; /* White background */
+    background-color: #ffffff00; /* White background */
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds shadow for better visibility */
     border-radius: 10px; /* Optional: rounds the corners */
     text-emphasis: black;
+    outline-style: solid;
+    outline-width: medium;
+    outline-color: black;
+
 }
 
 .categoryButton{
@@ -43,6 +46,29 @@
     border-radius: 15px;
 }
 
+
+
+#versusText{
+  align-items: center;
+  align-self: center;
+  font-size: 4rem;
+
+}
+
+#checkmarkText{
+  align-items: center;
+  align-self: center;
+  font-size: 4rem;
+
+}
+
+
+#crossText{
+  align-items: center;
+  align-self: center;
+  font-size: 4rem;
+
+}
 
 
  

@@ -15,6 +15,8 @@ var scoreSceneHTML;
 
 var startchattingbutton;
 
+var startChatting = false;
+
 
 export default class ScoreScene extends Phaser.Scene {
     constructor() {
@@ -49,27 +51,83 @@ export default class ScoreScene extends Phaser.Scene {
       startchattingbutton = new MyDOMElement(self, 360, 550, scoreSceneHTML.getChildByID("endbutton")); 
       startchattingbutton.setOrigin(0,0).addListener('click');
 
+      startchattingbutton.on('click', function (pointer){
+
+        if (startChatting){
+          startChatting = false;
+          document.getElementById("endbutton").classList.remove('btn-dark')
+          document.getElementById("endbutton").classList.add('btn-outline-dark')
+
+        }
+        else{
+          startChatting = true;
+          document.getElementById("endbutton").classList.add('btn-dark')
+          document.getElementById("endbutton").classList.remove('btn-outline-dark')
+        }
+        socket.emit('notifyChattingServer', startChatting, Global.isHost);
+
+
+      });
+
       if (Global.playerOneScore > Global.playerTwoScore){
         if (Global.isHost){
-          endGameText.setInnerText('You won this game!\n Score: '+ Global.playerOneScore);
+          endGameText.setInnerText('Herlichen Glückwunsch, Team ' + Global.playerOneName + '!' 
+          + '\nIhr habt gewonnen!\n Ihr habt: '+ Global.playerOneScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team' + Global.playerTwoName + ' haben nur '+ Global.playerTwoScore + ' Punkte verdient!' );
         }
         if (Global.isGuest){
-          endGameText.setInnerText('You lost this game!\n Score: '+ Global.playerTwoScore);
+          endGameText.setInnerText('Schade, Team ' + Global.playerTwoName + '!' 
+          + '\nIhr habt leider verloren!\n Ihr habt: '+ Global.playerTwoScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team' + Global.playerOneName + ' haben '+ Global.playerOneScore + ' Punkte verdient!' );
         }
       }
+
       else if (Global.playerOneScore < Global.playerTwoScore){
         if (Global.isGuest){
-          endGameText.setInnerText('You won this game!\n Score: '+ Global.playerTwoScore);
+          endGameText.setInnerText('Herlichen Glückwunsch, Team ' + Global.playerTwoName + '!' 
+          + '\nIhr habt gewonnen!\n Ihr habt: '+ Global.playerTwoScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team' + Global.playerOneName + ' haben nur '+ Global.playerOneScore + ' Punkte verdient!' );
         }
         if (Global.isHost){
-          endGameText.setInnerText('You lost this game!\n Score: '+ Global.playerOneScore);
+          endGameText.setInnerText('Schade, Team ' + Global.playerOneName + '!' 
+          + '\nIhr habt leider verloren!\n Ihr habt: '+ Global.playerOneScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team' + Global.playerTwoName + ' haben '+ Global.playerTwoScore + ' Punkte verdient!' );
         }
       }
+
       else if (Global.playerOneScore == Global.playerTwoScore){
-        endGameText.setInnerText("This game ended in a draw!");
+        if (Global.isHost){
+          endGameText.setInnerText('Das ist ein Unentschieden, Team ' + Global.playerOneName + '!' 
+          + '\nIhr habt: '+ Global.playerOneScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team' + Global.playerTwoName + ' haben  genau so viele Punkte geholt!' );
+        }
+        if (Global.isGuest){
+          endGameText.setInnerText('Das ist ein Unentschieden, Team ' + Global.playerTwoName + '!' 
+          + '\nIhr habt: '+ Global.playerTwoScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team' + Global.playerOneName + ' haben genau so viele Punkte geholt!' );
+        }
+       
       
       }
+
+
+      socket.on('notifyChattingPlayers', function(){
+      
+          startchattingbutton.destroy();
+          endGameText.destroy();
+         
+          self.scene.launch("ChatScene");
+          self.scene.get("ChatScene").scene.bringToTop();
+
+  
+          self.scene.get("ChatScene").scene.setVisible(true);
+          self.scene.get("ChatScene").scene.setActive(true);
+          self.scene.get("ReactionScene").scene.bringToTop();
+
+      });
     }
+
+
 
     update() {
     }

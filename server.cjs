@@ -21,6 +21,8 @@ var playerCountMax = 2;
 var hostIsReady = false;
 var guestIsReady = false;
 
+var chatReady = 0
+
 /*
   Player object:
     - playerID: Simple integer counter
@@ -51,7 +53,7 @@ io.on('connection', function (socket) {
     console.log('User with PlayerID: ', playerList[playerCountOverall].playerID, ' and with SocketID: ', playerList[playerCountOverall].socketID, ' has connected!\n');
     playerCountOverall ++;
     playerCountCurrent ++;
-    if (playerCountOverall <= 2){
+    if (playerCountCurrent <= 2){
       socket.join('game');
  
       
@@ -72,6 +74,7 @@ io.on('connection', function (socket) {
     console.log('Reason: ', reason);
     playerList[player.playerID].connectionStatus = "disconnected" 
     playerCountCurrent --;
+    io.in('game').emit('joinedGamePlayers', playerCountCurrent);
     io.in('game').emit('setPlayerCountCurrent', playerCountCurrent);
     if (playerCountCurrent == 0){
       console.log('All players left. The server will now close down');
@@ -110,6 +113,15 @@ io.on('connection', function (socket) {
   socket.on('notifyReadyServer', function (isReady, isHost){
     io.in('game').emit('notifyReadyPlayers',isReady, isHost);
   });
+
+  socket.on('notifyReadyServer', function (isReady, isHost){
+    io.in('game').emit('notifyReadyPlayers',isReady, isHost);
+  });
+
+  socket.on('joinedGameServer', function (){
+    io.in('game').emit('joinedGamePlayers', playerCountCurrent);
+  });
+
 
 
   // Category Choice Scene
@@ -162,13 +174,41 @@ io.on('connection', function (socket) {
     io.in('game').emit('setPlayerTwoNameGlobal', name);
   });
 
+  
+  socket.on('resetIconsServer', function(){
+    io.in('game').emit('resetIcons');
+  });
+
+  
+  socket.on('startReactionScene', function(){
+    io.in('game').emit('startReactions');
+  });
+
+
 
   //Reaction Scene
-  socket.on('sendEmoji', function(emojiType){
+  socket.on('sendEmoji', function(emojiType, ownID, opponentID){
+
+
     console.log(emojiType)
     var x = Math.floor(Math.random() * 1000) + 100; 
     var y = Math.floor(Math.random() * 500) + 100; 
-    io.in('game').emit('reactWithEmoji', emojiType, x, y);
+    io.to(opponentID).emit('reactWithEmoji', emojiType, x, y);
+    io.to(ownID).emit('displayEmoji', emojiType);
+
+  });
+// Score Scene
+  socket.on('notifyChattingServer', function (isReady, isHost){
+    if (isReady){
+      chatReady = chatReady + 1 ;
+    }
+    else{
+      chatReady = chatReady - 1 ;
+
+    }
+    if (chatReady == 2){
+      io.in('game').emit('notifyChattingPlayers');
+    }
   });
 
 //Chat Scene
@@ -197,7 +237,7 @@ function getPlayer(socket){
 // Server listens on port 80 for join requests
 // use 8081 for localhost testing and 80 for heroku server testing
 
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 80;
 
 
 server.listen(PORT, function () {
