@@ -72,39 +72,39 @@ export default class ScoreScene extends Phaser.Scene {
       if (Global.playerOneScore > Global.playerTwoScore){
         if (Global.isHost){
           endGameText.setInnerText('Herlichen Glückwunsch, Team ' + Global.playerOneName + '!' 
-          + '\nIhr habt gewonnen!\n Ihr habt: '+ Global.playerOneScore + ' Punkte verdient!' 
-          + '\nEure Wiedersacher, Team' + Global.playerTwoName + ' haben nur '+ Global.playerTwoScore + ' Punkte verdient!' );
+          + '\nIhr habt gewonnen!\n Ihr habt '+ Global.playerOneScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team ' + Global.playerTwoName + ' haben nur '+ Global.playerTwoScore + ' Punkte verdient!' );
         }
         if (Global.isGuest){
           endGameText.setInnerText('Schade, Team ' + Global.playerTwoName + '!' 
-          + '\nIhr habt leider verloren!\n Ihr habt: '+ Global.playerTwoScore + ' Punkte verdient!' 
-          + '\nEure Wiedersacher, Team' + Global.playerOneName + ' haben '+ Global.playerOneScore + ' Punkte verdient!' );
+          + '\nIhr habt leider verloren!\n Ihr habt '+ Global.playerTwoScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team ' + Global.playerOneName + ' haben '+ Global.playerOneScore + ' Punkte verdient!' );
         }
       }
 
       else if (Global.playerOneScore < Global.playerTwoScore){
         if (Global.isGuest){
           endGameText.setInnerText('Herlichen Glückwunsch, Team ' + Global.playerTwoName + '!' 
-          + '\nIhr habt gewonnen!\n Ihr habt: '+ Global.playerTwoScore + ' Punkte verdient!' 
-          + '\nEure Wiedersacher, Team' + Global.playerOneName + ' haben nur '+ Global.playerOneScore + ' Punkte verdient!' );
+          + '\nIhr habt gewonnen!\n Ihr habt '+ Global.playerTwoScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team ' + Global.playerOneName + ' haben nur '+ Global.playerOneScore + ' Punkte verdient!' );
         }
         if (Global.isHost){
           endGameText.setInnerText('Schade, Team ' + Global.playerOneName + '!' 
-          + '\nIhr habt leider verloren!\n Ihr habt: '+ Global.playerOneScore + ' Punkte verdient!' 
-          + '\nEure Wiedersacher, Team' + Global.playerTwoName + ' haben '+ Global.playerTwoScore + ' Punkte verdient!' );
+          + '\nIhr habt leider verloren!\n Ihr habt '+ Global.playerOneScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team ' + Global.playerTwoName + ' haben '+ Global.playerTwoScore + ' Punkte verdient!' );
         }
       }
 
       else if (Global.playerOneScore == Global.playerTwoScore){
         if (Global.isHost){
           endGameText.setInnerText('Das ist ein Unentschieden, Team ' + Global.playerOneName + '!' 
-          + '\nIhr habt: '+ Global.playerOneScore + ' Punkte verdient!' 
-          + '\nEure Wiedersacher, Team' + Global.playerTwoName + ' haben  genau so viele Punkte geholt!' );
+          + '\nIhr habt '+ Global.playerOneScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team ' + Global.playerTwoName + ' haben  genau so viele Punkte geholt!' );
         }
         if (Global.isGuest){
           endGameText.setInnerText('Das ist ein Unentschieden, Team ' + Global.playerTwoName + '!' 
-          + '\nIhr habt: '+ Global.playerTwoScore + ' Punkte verdient!' 
-          + '\nEure Wiedersacher, Team' + Global.playerOneName + ' haben genau so viele Punkte geholt!' );
+          + '\nIhr habt '+ Global.playerTwoScore + ' Punkte verdient!' 
+          + '\nEure Wiedersacher, Team ' + Global.playerOneName + ' haben genau so viele Punkte geholt!' );
         }
        
       

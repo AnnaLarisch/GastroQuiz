@@ -33,14 +33,14 @@ export default class ChatScene extends Phaser.Scene {
 
         if (Global.isHost) {
             var opponentGroupName = new MyDOMElement(self, 175, 45, chatSceneHTML.getChildByID("opponentGroupName"));
-            opponentGroupName.setInnerText(Global.playerTwoName)
+            opponentGroupName.setInnerText("Chat mit: " + Global.playerTwoName)
             var ownGroupName = new MyDOMElement(self, 130, 765, chatSceneHTML.getChildByID("ownGroupName"));
             ownGroupName.setInnerText(Global.playerOneName)
 
         }
         else {
             var opponentGroupName = new MyDOMElement(self, 175, 45, chatSceneHTML.getChildByID("opponentGroupName"));
-            opponentGroupName.setInnerText(Global.playerOneName)
+            opponentGroupName.setInnerText("Chat mit: " + Global.playerOneName)
             var ownGroupName = new MyDOMElement(self, 130, 765, chatSceneHTML.getChildByID("ownGroupName"));
             ownGroupName.setInnerText(Global.playerTwoName)
 
