@@ -21,6 +21,8 @@ var answer1Button;
 var answer2Button;
 var answer3Button;
 var answer4Button;
+var logButton;
+
 var progressBarQuestion;
 var questionHeader;
 var questionHeaderContent;
@@ -50,7 +52,6 @@ var currentAnswers = [];
 var shuffleAnswers = [];
 var currentQuestion;
 
-
 var newQuestion;
 var usedQuestions = [];
 var opponentPortrait;
@@ -60,6 +61,8 @@ var checkmarkPopUp;
 var crossPopUp;
 var correctAnswerButtonHere;
 var correctAnswerButton;
+
+var loggedIn = false;
 
 
 var htmlElementList = [];
@@ -105,17 +108,20 @@ export default class QuestionScene extends Phaser.Scene {
 
 
 
-      questionDiv = new MyDOMElement(self, 260, 135, elementQuestionSceneHTML.getChildByID("questionDiv"), null, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat."); 
+      questionDiv = new MyDOMElement(self, 260, 135, elementQuestionSceneHTML.getChildByID("questionDiv"), null, ""); 
       questionDiv.setOrigin(0, 0);
 
-      answer1Button = new MyDOMElement(self, 260, 500, elementQuestionSceneHTML.getChildByID("answer1Button"), null, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat"); 
-      answer2Button = new MyDOMElement(self, 665, 500, elementQuestionSceneHTML.getChildByID("answer2Button"), null, "Answer 2"); 
-      answer3Button = new MyDOMElement(self, 260, 620, elementQuestionSceneHTML.getChildByID("answer3Button"), null, "Answer 3"); 
-      answer4Button = new MyDOMElement(self, 665, 620, elementQuestionSceneHTML.getChildByID("answer4Button"), null, "Answer 4"); 
+      answer1Button = new MyDOMElement(self, 260, 500, elementQuestionSceneHTML.getChildByID("answer1Button"), null, ""); 
+      answer2Button = new MyDOMElement(self, 665, 500, elementQuestionSceneHTML.getChildByID("answer2Button"), null, ""); 
+      answer3Button = new MyDOMElement(self, 260, 620, elementQuestionSceneHTML.getChildByID("answer3Button"), null, ""); 
+      answer4Button = new MyDOMElement(self, 665, 620, elementQuestionSceneHTML.getChildByID("answer4Button"), null, ""); 
+      logButton = new MyDOMElement(self, -1050, -585, elementQuestionSceneHTML.getChildByID("logButton"), null, ""); 
+
       answer1Button.setOrigin(0, 0).addListener('click');
       answer2Button.setOrigin(0, 0).addListener('click');
       answer3Button.setOrigin(0, 0).addListener('click');
       answer4Button.setOrigin(0, 0).addListener('click');
+      logButton.setOrigin(0, 0).addListener('click');
 
 
 
@@ -134,25 +140,49 @@ export default class QuestionScene extends Phaser.Scene {
 
       // Question interaction 
       answer1Button.on('click', function (pointer){
+        document.getElementById("logButton").disabled = false;
         chosenAnswer = shuffleAnswers[0];
         chosenButton = 1;
         setAndClearButtonColor(1, 2, 3, 4);
       });
       answer2Button.on('click', function (pointer){
+        document.getElementById("logButton").disabled = false;
         chosenAnswer = shuffleAnswers[1];        
         chosenButton = 2;
         setAndClearButtonColor(2, 1, 3, 4);
 
       });
       answer3Button.on('click', function (pointer){
+        document.getElementById("logButton").disabled = false;
         chosenAnswer = shuffleAnswers[2];
         chosenButton = 3;        
         setAndClearButtonColor(3, 1, 2, 4);
       });
       answer4Button.on('click', function (pointer){
+        document.getElementById("logButton").disabled = false;
         chosenAnswer = shuffleAnswers[3];
         chosenButton = 4;
         setAndClearButtonColor(4, 1, 2, 3);
+      });
+
+      logButton.on('click', function (pointer){
+        if (loggedIn){
+
+          document.getElementById("logButton").classList.remove('btn-dark')
+          document.getElementById("logButton").classList.add('btn-outline-dark')
+        
+          loggedIn = false;
+          socket.emit('loggedAnswerServer', loggedIn);
+
+        }
+        else{
+          document.getElementById("logButton").classList.remove('btn-outline-dark')
+          document.getElementById("logButton").classList.add('btn-dark')
+          loggedIn = true;
+          socket.emit('loggedAnswerServer',loggedIn);
+
+        }
+
       });
       
       socket.on('resetIcons'), function(){
@@ -162,37 +192,10 @@ export default class QuestionScene extends Phaser.Scene {
         crossPopUp.setPosition(-100, -100);
       }
     
-
-      // Socket Interactions
-
-      // Set chosen question for all players 
-      socket.on('tellQuestionGame', function(currentQuestion_s, correct_answer_s, correctAnswerHere_s, currentAnswers_s, shuffleAnswers_s){
-        currentQuestion = currentQuestion_s;
-        correct_answer = correct_answer_s;
-        correctAnswerButton = correctAnswerHere_s;
-        currentAnswers = currentAnswers_s;
-        shuffleAnswers = shuffleAnswers_s;
-  
-        answer1Button.setInnerText(shuffleAnswers_s[0]);
-        answer2Button.setInnerText(shuffleAnswers_s[1]);
-        answer3Button.setInnerText(shuffleAnswers_s[2]);
-        answer4Button.setInnerText(shuffleAnswers_s[3]);
-        questionDiv.setInnerText(currentQuestion_s.question);
-        
-        document.getElementById("player1IconPopup").style.visibility = "visible";
-        document.getElementById("player2IconPopup").style.visibility = "visible";
-        document.getElementById("checkmarkIcon").style.visibility = "visible";
-        document.getElementById("crossIcon").style.visibility = "visible";
-      });
-
-      // Host tells other players to move prpgress bar
-      socket.on('moveProgressBarGame', function(progressBarWidth){
-
-        // Progress Bar size reduction
-        if(progressBarWidth >= 0){    
-          document.getElementById("progressBarQuestion").style.width = progressBarWidth.toString() +"px"
-        } else {
-          document.getElementById("progressBarQuestion").style.width = "0px"
+      socket.on('loggedAnswerPlayer'), function(){
+        console.log("Logged in answers lol")
+        loggedIn = false;
+        document.getElementById("progressBarQuestion").style.width = "0px"
           if (Global.isHost){
             clearInterval(progressBarInterval);
           }
@@ -258,6 +261,103 @@ export default class QuestionScene extends Phaser.Scene {
             checkmarkPopUp.setPosition(correctxpos, correctypos);
         
           }
+        }
+
+      // Socket Interactions
+
+      // Set chosen question for all players 
+      socket.on('tellQuestionGame', function(currentQuestion_s, correct_answer_s, correctAnswerHere_s, currentAnswers_s, shuffleAnswers_s){
+        currentQuestion = currentQuestion_s;
+        correct_answer = correct_answer_s;
+        correctAnswerButton = correctAnswerHere_s;
+        currentAnswers = currentAnswers_s;
+        shuffleAnswers = shuffleAnswers_s;
+  
+        answer1Button.setInnerText(shuffleAnswers_s[0]);
+        answer2Button.setInnerText(shuffleAnswers_s[1]);
+        answer3Button.setInnerText(shuffleAnswers_s[2]);
+        answer4Button.setInnerText(shuffleAnswers_s[3]);
+        questionDiv.setInnerText(currentQuestion_s.question);
+        
+        document.getElementById("player1IconPopup").style.visibility = "visible";
+        document.getElementById("player2IconPopup").style.visibility = "visible";
+        document.getElementById("checkmarkIcon").style.visibility = "visible";
+        document.getElementById("crossIcon").style.visibility = "visible";
+      });
+
+      // Host tells other players to move prpgress bar
+      socket.on('moveProgressBarGame', function(progressBarWidth){
+
+        // Progress Bar size reduction
+        if(progressBarWidth >= 0){    
+          document.getElementById("progressBarQuestion").style.width = progressBarWidth.toString() +"px"
+        } else {
+          document.getElementById("progressBarQuestion").style.width = "0px"
+          if (Global.isHost){
+            clearInterval(progressBarInterval);
+          }
+          // If time is up, call to check correct answer
+          checkAnswers();
+          var chosenxpos = 0;
+          var chosenypos = 0;
+          
+          if (chosenButton == 1){ 
+            chosenxpos = 560;
+            chosenypos = 470;
+          }
+          else if (chosenButton == 2){
+            chosenxpos = 965;
+            chosenypos = 470;
+          }
+          else if (chosenButton == 3){
+            chosenxpos = 560;
+            chosenypos = 590;
+          }
+          else if (chosenButton == 4){
+            chosenxpos = 965;
+            chosenypos = 590;
+        
+          }
+          else {
+            chosenxpos = -100;
+            chosenypos= -100;
+          }
+
+          var correctxpos = 0;
+          var correctypos = 0;
+          
+          if (correctAnswerButton == 1){ 
+            correctxpos = 560;
+            correctypos = 470;
+          }
+          else if (correctAnswerButton == 2){
+            correctxpos = 965;
+            correctypos = 470;
+          }
+          else if (correctAnswerButton == 3){
+            correctxpos = 560;
+            correctypos = 590;
+          }
+          else if (correctAnswerButton == 4){
+            correctxpos = 965;
+            correctypos = 590;
+          
+          }
+          if (chosenAnswer == correct_answer){
+        
+        
+            checkmarkPopUp.setPosition(chosenxpos, chosenypos);
+        
+          }
+          else if (chosenAnswer === "NO_ANSWER") {
+            console.log("No answer selected!")
+            checkmarkPopUp.setPosition(correctxpos, correctypos);
+          }
+          else{
+            crossPopUp.setPosition(chosenxpos, chosenypos);
+            checkmarkPopUp.setPosition(correctxpos, correctypos);
+        
+          }
 
 
         }
@@ -301,10 +401,14 @@ export default class QuestionScene extends Phaser.Scene {
         document.getElementById("answer4Button").classList.remove('btn-dark')
         document.getElementById("answer4Button").classList.add('btn-outline-dark')
 
-        document.getElementById("answer1Button").classList.disabled = false;
-        document.getElementById("answer2Button").classList.disabled = false;
-        document.getElementById("answer3Button").classList.disabled = false;
-        document.getElementById("answer4Button").classList.disabled = false;
+        document.getElementById("logButton").classList.remove('btn-dark')
+        document.getElementById("logButton").classList.add('btn-outline-dark')
+
+        document.getElementById("answer1Button").disabled = false;
+        document.getElementById("answer2Button").disabled = false;
+        document.getElementById("answer3Button").disabled = false;
+        document.getElementById("answer4Button").disabled = false;
+        document.getElementById("logButton").disabled = true;
 
       });
 
@@ -326,7 +430,9 @@ export default class QuestionScene extends Phaser.Scene {
         document.getElementById("answer2Button").style.visibility = "hidden";
         document.getElementById("answer3Button").style.visibility = "hidden";
         document.getElementById("answer4Button").style.visibility = "hidden";
-    
+        document.getElementById("logButton").style.visibility = "hidden";
+
+        
         document.getElementById("progressBarBehindQuestion").style.visibility = "hidden";
     
         self.scene.setVisible(false);
@@ -346,6 +452,7 @@ export default class QuestionScene extends Phaser.Scene {
         document.getElementById("player2IconPopup").style.visibility = "hidden";
         document.getElementById("checkmarkIcon").style.visibility = "hidden";
         document.getElementById("crossIcon").style.visibility = "hidden";
+        document.getElementById("logButton").style.visibility = "hidden";
 
 
         document.getElementById("progressBarBehindQuestion").style.visibility = "hidden";
@@ -411,9 +518,9 @@ export default class QuestionScene extends Phaser.Scene {
       document.getElementById("answer2Button").style.visibility = "visible";
       document.getElementById("answer3Button").style.visibility = "visible";
       document.getElementById("answer4Button").style.visibility = "visible";
+      document.getElementById("logButton").style.visibility = "visible";
 
       document.getElementById("progressBarBehindQuestion").style.visibility = "visible";
-
      
       document.getElementById("answer1Button").classList.remove('btn-success')
       document.getElementById("answer1Button").classList.remove('btn-danger')
@@ -434,6 +541,9 @@ export default class QuestionScene extends Phaser.Scene {
       document.getElementById("answer4Button").classList.remove('btn-danger')
       document.getElementById("answer4Button").classList.remove('btn-dark')
       document.getElementById("answer4Button").classList.add('btn-outline-dark')
+      document.getElementById("logButton").classList.remove('btn-dark')
+      document.getElementById("logButton").classList.add('btn-outline-dark')
+
     }
 }
 
@@ -489,10 +599,11 @@ function checkAnswers(){
     document.getElementById("answer"+ chosenButton + "Button").classList.add('btn-success')
     document.getElementById("answer"+ chosenButton + "Button").classList.remove('btn-dark')
     document.getElementById("answer"+ chosenButton + "Button").classList.remove('btn-outline-dark')
-    document.getElementById("answer1Button").classList.disabled = true;
-    document.getElementById("answer2Button").classList.disabled = true;
-    document.getElementById("answer3Button").classList.disabled = true;
-    document.getElementById("answer4Button").classList.disabled = true;
+    document.getElementById("answer1Button").disabled = true;
+    document.getElementById("answer2Button").disabled = true;
+    document.getElementById("answer3Button").disabled = true;
+    document.getElementById("answer4Button").disabled = true;
+    document.getElementById("logButton").disabled = true;
 
 
     if (Global.isHost){
@@ -504,10 +615,12 @@ function checkAnswers(){
     console.log("Correct answer selected!")
   }
   else if (chosenAnswer === "NO_ANSWER") {
-    document.getElementById("answer1Button").classList.disabled = true;
-    document.getElementById("answer2Button").classList.disabled = true;
-    document.getElementById("answer3Button").classList.disabled = true;
-    document.getElementById("answer4Button").classList.disabled = true;
+    document.getElementById("answer1Button").disabled = true;
+    document.getElementById("answer2Button").disabled = true;
+    document.getElementById("answer3Button").disabled = true;
+    document.getElementById("answer4Button").disabled = true;
+    document.getElementById("logButton").disabled = true;
+
     console.log("No answer selected!")
   }
   else{
@@ -517,10 +630,12 @@ function checkAnswers(){
     document.getElementById("answer"+ chosenButton + "Button").classList.add('btn-danger')
     document.getElementById("answer"+ chosenButton + "Button").classList.remove('btn-dark')
     document.getElementById("answer"+ chosenButton + "Button").classList.remove('btn-outline-dark')
-    document.getElementById("answer1Button").classList.disabled = true;
-    document.getElementById("answer2Button").classList.disabled = true;
-    document.getElementById("answer3Button").classList.disabled = true;
-    document.getElementById("answer4Button").classList.disabled = true;
+    document.getElementById("answer1Button").disabled = true;
+    document.getElementById("answer2Button").disabled = true;
+    document.getElementById("answer3Button").disabled = true;
+    document.getElementById("answer4Button").disabled = true;
+    document.getElementById("logButton").disabled = true;
+
     console.log("Wrong answer selected!")
 
   }

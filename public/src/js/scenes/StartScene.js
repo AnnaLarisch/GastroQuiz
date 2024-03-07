@@ -69,7 +69,7 @@ export default class StartScene extends Phaser.Scene {
       connectedTeamstext = new MyDOMElement(self, 80, 730, elementStartSceneHTML.getChildByID("connectedTeams")); 
       connectedTeamstext.setOrigin(0,0);
       // </Place HTML DOM Elements>
-
+     
 
       // Phaser game element placement & setup
 
@@ -81,41 +81,17 @@ export default class StartScene extends Phaser.Scene {
 
       socket.emit('setPlayerClassServer');
       socket.emit('joinedGameServer');
-      startbutton.on('click', function (pointer){
-        var validPattern = /^[a-zA-ZäöüÄÖÜ0-9-# ]+$/;
-        var input =  document.getElementById("group_name");
 
-        if(validPattern.test(input.value) && input.value.length >= 3) {
 
-   
+      startbutton.on('click', function(pointer) {
+        handleInput();
+    });
 
-          if (playerReady){
-            playerReady = false;
-            document.getElementById("startbutton").classList.remove('btn-dark')
-            document.getElementById("startbutton").classList.add('btn-outline-dark')
-
-          }
-          else{
-            playerReady = true;
-            document.getElementById("startbutton").classList.add('btn-dark')
-            document.getElementById("startbutton").classList.remove('btn-outline-dark')
-          }
-          socket.emit('setPlayerReadyServer', playerReady);
-          socket.emit('notifyReadyServer', playerReady, Global.isHost);
-
-        } 
-        else if (validPattern.test(input.value) && input.value.length < 3) {
-          document.getElementById("group_name").value = "Eingabe zu kurz!";
-        }
-        
-        else 
-        {
-        // If the input is invalid, handle the error (e.g., show an error message or clear the input)
-        // Optionally, clear the input or set it to a default value
-        document.getElementById("group_name").value = "Unerlaubte Eingabe!";
-         }
-      });
-
+    // Create a Key object for the Enter key
+    var enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    enterKey.on('down', function (event) {
+      handleInput();
+    });
       
 
 
@@ -233,4 +209,28 @@ export default class StartScene extends Phaser.Scene {
 
 
     }
+}
+
+function handleInput() {
+  var validPattern = /^[a-zA-ZäöüÄÖÜ0-9-# ]+$/;
+  var input = document.getElementById("group_name");
+
+  if (validPattern.test(input.value) && input.value.length >= 3) {
+      if (playerReady) {
+          playerReady = false;
+          document.getElementById("startbutton").classList.remove('btn-dark');
+          document.getElementById("startbutton").classList.add('btn-outline-dark');
+      } else {
+          playerReady = true;
+          document.getElementById("startbutton").classList.add('btn-dark');
+          document.getElementById("startbutton").classList.remove('btn-outline-dark');
+      }
+      socket.emit('setPlayerReadyServer', playerReady);
+      socket.emit('notifyReadyServer', playerReady, Global.isHost);
+  } else if (validPattern.test(input.value) && input.value.length < 3) {
+      document.getElementById("group_name").value = "Eingabe zu kurz!";
+  } else {
+      // If the input is invalid, handle the error
+      document.getElementById("group_name").value = "Unerlaubte Eingabe!";
+  }
 }

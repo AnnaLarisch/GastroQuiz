@@ -23,6 +23,8 @@ var guestIsReady = false;
 
 var chatReady = 0
 
+var loggedCounter = 0;
+
 /*
   Player object:
     - playerID: Simple integer counter
@@ -164,6 +166,21 @@ io.on('connection', function (socket) {
   });
   socket.on('tellAnswerToOpponentServer', function(chosenAnswer, opponentID, sendByHost){
     io.to(opponentID).emit('tellAnswerToOpponentGame',chosenAnswer, sendByHost);
+  });
+
+  socket.on('loggedAnswerServer', function(logged){
+    if (logged){
+      loggedCounter = loggedCounter + 1
+    }
+    else{
+      loggedCounter = loggedCounter - 1
+    }
+    console.log(loggedCounter)
+    if (loggedCounter == 2){
+     
+      loggedCounter = 0
+      io.in('game').emit('loggedAnswerPlayer');
+    }
   });
 
   socket.on('setPlayerOneName', function(name){

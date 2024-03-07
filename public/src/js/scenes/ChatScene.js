@@ -29,18 +29,22 @@ export default class ChatScene extends Phaser.Scene {
         const cameraWidth = self.cameras.main.width
         const cameraHeight = self.cameras.main.height
 
+        var enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        enterKey.on('down', function (event) {
+            foo(); // Call your function when the Enter key is pressed
+        });
         chatSceneHTML = self.add.dom(40, 0).setOrigin(0, 0).createFromCache('chatSceneHTML');
 
         if (Global.isHost) {
-            var opponentGroupName = new MyDOMElement(self, 175, 45, chatSceneHTML.getChildByID("opponentGroupName"));
-            opponentGroupName.setInnerText("Chat mit: " + Global.playerTwoName)
+            var opponentGroupName = new MyDOMElement(self, 250, 45, chatSceneHTML.getChildByID("opponentGroupName"));
+            opponentGroupName.setInnerText( Global.playerTwoName)
             var ownGroupName = new MyDOMElement(self, 130, 765, chatSceneHTML.getChildByID("ownGroupName"));
             ownGroupName.setInnerText(Global.playerOneName)
 
         }
         else {
             var opponentGroupName = new MyDOMElement(self, 175, 45, chatSceneHTML.getChildByID("opponentGroupName"));
-            opponentGroupName.setInnerText("Chat mit: " + Global.playerOneName)
+            opponentGroupName.setInnerText( Global.playerOneName)
             var ownGroupName = new MyDOMElement(self, 130, 765, chatSceneHTML.getChildByID("ownGroupName"));
             ownGroupName.setInnerText(Global.playerTwoName)
 
@@ -49,7 +53,22 @@ export default class ChatScene extends Phaser.Scene {
 
         var buttonCancel = new MyDOMElement(self, 1145, 40, chatSceneHTML.getChildByID("buttonCancel"));
         buttonCancel.addListener('click');
-
+        buttonCancel.on('click', function (pointer){
+            console.log("beenden")
+            self.scene.get("BackgroundScene").scene.setActive(true);
+            self.scene.get("BackgroundScene").scene.setVisible(true);
+            self.scene.get("BackgroundScene").scene.bringToTop();
+            self.scene.launch("CreditsScene");
+            self.scene.get("CreditsScene").scene.setActive(true);
+            self.scene.get("CreditsScene").scene.setVisible(true);
+            self.scene.get("CreditsScene").scene.bringToTop();
+            opponentGroupName.setVisible(false)
+            ownGroupName.setVisible(false)
+            buttonChat.setVisible(false)
+            inputChat.setVisible(false)
+            buttonCancel.setVisible(false)
+            chatSceneHTML.setVisible(false)
+          });
         var buttonChat = new MyDOMElement(self, 1170, 755, chatSceneHTML.getChildByID("buttonChat"));
         buttonChat.addListener('click');
 
@@ -65,10 +84,14 @@ export default class ChatScene extends Phaser.Scene {
 }
 
 function foo() {
-    console.log(inputChat.value);
-    createOwnMessage(inputChat.value);
-    socket.emit('sendOpponentMessage', inputChat.value, Global.isHost);
-    inputChat.value = ""
+    if (inputChat.value.trim() != ""){
+        console.log(inputChat.value);
+        createOwnMessage(inputChat.value);
+        socket.emit('sendOpponentMessage', inputChat.value, Global.isHost);
+        inputChat.value = ""
+    }
+
+   
 
 }
 
