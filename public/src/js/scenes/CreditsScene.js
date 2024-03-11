@@ -25,6 +25,10 @@ export default class CreditsScene extends Phaser.Scene {
       self.scene.get("ChatScene").scene.sendToBack();
       self.scene.get("ChatScene").scene.setVisible(false);
       self.scene.get("ChatScene").scene.setActive(false);
+      self.scene.get("ReactionScene").scene.sendToBack();
+      self.scene.get("ReactionScene").scene.setVisible(false);
+      self.scene.get("ReactionScene").scene.setActive(false);
+      self.scene.get("UIScene").scene.bringToTop();
       const bg = self.add.image(0, 0, 'background_white_asbtract')
       .setOrigin(0)
 

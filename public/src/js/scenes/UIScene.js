@@ -15,9 +15,8 @@ export default class UIScene extends Phaser.Scene {
     create() {
         self = this;
 
-        buttonChangeFullscreenWindow = self.physics.add.sprite(1220, 10, 'buttonFullscreen').setOrigin(0,0).setScale(0.2).setInteractive();
-        buttonChangeFullscreenWindow.alpha = 0.7;
-
+        buttonChangeFullscreenWindow = self.physics.add.sprite(1190, 10, 'buttonFullscreen').setOrigin(0,0).setScale(0.2).setInteractive();
+        buttonChangeFullscreenWindow.setScale(0.15);
         buttonChangeFullscreenWindow.on('pointerup', function (pointer){
             
         if (self.scale.isFullscreen) {
