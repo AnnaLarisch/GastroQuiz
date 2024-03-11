@@ -23,7 +23,8 @@ var guestIsReady = false;
 
 var chatReady = 0
 
-var loggedCounter = 0;
+var hostLogged = false;
+var guestLogged = false;
 
 /*
   Player object:
@@ -44,29 +45,29 @@ var playerList = [player];
 
 io.on('connection', function (socket) {
 
-    
 
-    playerList[playerCountOverall] = {
-      playerID: playerCountOverall,
-      socketID: socket.id,
-      connectionStatus: "connected"
-    }
-    
-    console.log('User with PlayerID: ', playerList[playerCountOverall].playerID, ' and with SocketID: ', playerList[playerCountOverall].socketID, ' has connected!\n');
-    playerCountOverall ++;
-    playerCountCurrent ++;
-    if (playerCountCurrent <= 2){
-      socket.join('game');
- 
-      
-    }
-    else{
-      gameFull = true;
-      socket.join('gameFull');
-      console.log("The game is full, there are already " + playerCountMax + " players!");
-    }
 
-  
+  playerList[playerCountOverall] = {
+    playerID: playerCountOverall,
+    socketID: socket.id,
+    connectionStatus: "connected"
+  }
+
+  console.log('User with PlayerID: ', playerList[playerCountOverall].playerID, ' and with SocketID: ', playerList[playerCountOverall].socketID, ' has connected!\n');
+  playerCountOverall++;
+  playerCountCurrent++;
+  if (playerCountCurrent <= 2) {
+    socket.join('game');
+
+
+  }
+  else {
+    gameFull = true;
+    socket.join('gameFull');
+    console.log("The game is full, there are already " + playerCountMax + " players!");
+  }
+
+
 
 
 
@@ -74,37 +75,37 @@ io.on('connection', function (socket) {
     player = getPlayer(socket);
     console.log('User with PlayerID: ', player.playerID, ' and with SocketID: ', player.socketID, ' has disconnected!');
     console.log('Reason: ', reason);
-    playerList[player.playerID].connectionStatus = "disconnected" 
-    playerCountCurrent --;
+    playerList[player.playerID].connectionStatus = "disconnected"
+    playerCountCurrent--;
     io.in('game').emit('joinedGamePlayers', playerCountCurrent);
     io.in('game').emit('setPlayerCountCurrent', playerCountCurrent);
-    if (playerCountCurrent == 0){
+    if (playerCountCurrent == 0) {
       console.log('All players left. The server will now close down');
 
       io.close()
-      
+
     }
   });
 
   // Scene Socket Events
 
   // Start Scene
-  socket.on('setPlayerClassServer', function (){
-    if (playerCountCurrent <= playerCountMax){
+  socket.on('setPlayerClassServer', function () {
+    if (playerCountCurrent <= playerCountMax) {
       io.in('game').emit('setPlayerClassGame', playerCountCurrent);
     }
-    else{
+    else {
       io.in('gameFull').emit('callGameFullGame');
     }
   });
 
-  socket.on('setPlayerReadyServer', function (isReady){
-    if (isReady){
-      playerCountReady ++;
-    } else if (!isReady){
-      playerCountReady --;
+  socket.on('setPlayerReadyServer', function (isReady) {
+    if (isReady) {
+      playerCountReady++;
+    } else if (!isReady) {
+      playerCountReady--;
     }
-    if (playerCountReady == playerCountCurrent && playerCountReady <= playerCountMax && playerCountReady >= 2){
+    if (playerCountReady == playerCountCurrent && playerCountReady <= playerCountMax && playerCountReady >= 2) {
       var player1 = playerList[0]
       var player2 = playerList[1]
       io.in('game').emit('setSockeId', player1.socketID, player2.socketID);
@@ -112,15 +113,15 @@ io.on('connection', function (socket) {
     }
   });
 
-  socket.on('notifyReadyServer', function (isReady, isHost){
-    io.in('game').emit('notifyReadyPlayers',isReady, isHost);
+  socket.on('notifyReadyServer', function (isReady, isHost) {
+    io.in('game').emit('notifyReadyPlayers', isReady, isHost);
   });
 
-  socket.on('notifyReadyServer', function (isReady, isHost){
-    io.in('game').emit('notifyReadyPlayers',isReady, isHost);
+  socket.on('notifyReadyServer', function (isReady, isHost) {
+    io.in('game').emit('notifyReadyPlayers', isReady, isHost);
   });
 
-  socket.on('joinedGameServer', function (){
+  socket.on('joinedGameServer', function () {
     io.in('game').emit('joinedGamePlayers', playerCountCurrent);
   });
 
@@ -128,111 +129,125 @@ io.on('connection', function (socket) {
 
   // Category Choice Scene
 
-  socket.on('tellCategoriesServer', function(category1, category2, category3){
+  socket.on('tellCategoriesServer', function (category1, category2, category3) {
     io.in('game').emit('tellCategoriesGame', category1, category2, category3);
   });
 
-  socket.on('tellQuestionServer', function(currentQuestion, correct_answer, correct_answer_button, currentAnswers, shuffleAnswers){
+  socket.on('tellQuestionServer', function (currentQuestion, correct_answer, correct_answer_button, currentAnswers, shuffleAnswers) {
     io.in('game').emit('tellQuestionGame', currentQuestion, correct_answer, correct_answer_button, currentAnswers, shuffleAnswers);
   });
 
   // Question Scene
-  socket.on('increaseScoreServer', function(isHost){
+  socket.on('increaseScoreServer', function (isHost) {
     io.in('game').emit('increaseScoreGame', isHost);
   });
 
-  socket.on('colourCategoryServer', function(chosenCategoryNumber){
+  socket.on('colourCategoryServer', function (chosenCategoryNumber) {
     io.in('game').emit('colourCategoryGame', chosenCategoryNumber);
   });
-  socket.on('chooseCategoryCallServer', function(categoryName, setId, clearId1, clearId2){
+  socket.on('chooseCategoryCallServer', function (categoryName, setId, clearId1, clearId2) {
     io.in('game').emit('chooseCategoryCallGame', categoryName, setId, clearId1, clearId2);
   });
-  socket.on('moveProgressBarServer', function(width){
+  socket.on('moveProgressBarServer', function (width) {
     io.in('game').emit('moveProgressBarGame', width);
   });
-  socket.on('endGameSceneServer', function(){
+  socket.on('endGameSceneServer', function () {
     io.in('game').emit('endGameSceneGame');
   });
-  
-  socket.on('restartQuestionServer', function(){
+
+  socket.on('restartQuestionServer', function () {
     io.emit('restartQuestionGame');
   });
-  socket.on('resetSceneServer', function(){
+  socket.on('resetSceneServer', function () {
     io.in('game').emit('resetSceneGame');
   });
-  
-  socket.on('backToCategoryServer', function(){
+
+  socket.on('backToCategoryServer', function () {
     io.in('game').emit('backToCategoryGame');
   });
-  socket.on('tellAnswerToOpponentServer', function(chosenAnswer, opponentID, sendByHost){
-    io.to(opponentID).emit('tellAnswerToOpponentGame',chosenAnswer, sendByHost);
+  socket.on('tellAnswerToOpponentServer', function (chosenAnswer, opponentID, sendByHost) {
+    io.to(opponentID).emit('tellAnswerToOpponentGame', chosenAnswer, sendByHost);
   });
 
-  socket.on('loggedAnswerServer', function(logged){
-    if (logged){
-      loggedCounter = loggedCounter + 1
+  socket.on('loggedAnswerServer', function (logged, isHost) {
+    if (logged && isHost) {
+      hostLogged = true;
+      console.log("hostLogged", hostLogged)
     }
-    else{
-      loggedCounter = loggedCounter - 1
+    if (logged && !isHost) {
+      guestLogged = true;
+      console.log("guestLogged", guestLogged)
     }
-    console.log(loggedCounter)
-    if (loggedCounter == 2){
-     
-      loggedCounter = 0
+
+    if (!logged && isHost) {
+      hostLogged = false;
+      console.log("hostLogged", hostLogged)
+    }
+    if (!logged && !isHost) {
+      guestLogged = false;
+      console.log( "guestLogged",guestLogged)
+    }
+
+    if (hostLogged && guestLogged){
+      hostLogged = false;
+      guestLogged = false
       io.in('game').emit('loggedAnswerPlayer');
+
     }
+
+
   });
 
-  socket.on('setPlayerOneName', function(name){
-    io.in('game').emit('setPlayerOneNameGlobal', name);
-  });
+socket.on('setPlayerOneName', function (name) {
+  io.in('game').emit('setPlayerOneNameGlobal', name);
+});
 
-  socket.on('setPlayerTwoName', function(name){
-    io.in('game').emit('setPlayerTwoNameGlobal', name);
-  });
-
-  
-  socket.on('resetIconsServer', function(){
-    io.in('game').emit('resetIcons');
-  });
-
-  
-  socket.on('startReactionScene', function(){
-    io.in('game').emit('startReactions');
-  });
+socket.on('setPlayerTwoName', function (name) {
+  io.in('game').emit('setPlayerTwoNameGlobal', name);
+});
 
 
+socket.on('resetIconsServer', function () {
+  io.in('game').emit('resetIcons');
+});
 
-  //Reaction Scene
-  socket.on('sendEmoji', function(emojiType, ownID, opponentID){
+
+socket.on('startReactionScene', function () {
+  io.in('game').emit('startReactions');
+});
 
 
-    console.log(emojiType)
-    var x = Math.floor(Math.random() * 1000) + 100; 
-    var y = Math.floor(Math.random() * 500) + 100; 
-    io.to(opponentID).emit('reactWithEmoji', emojiType, x, y);
-    io.to(ownID).emit('displayEmoji', emojiType);
 
-  });
+//Reaction Scene
+socket.on('sendEmoji', function (emojiType, ownID, opponentID) {
+
+
+  console.log(emojiType)
+  var x = Math.floor(Math.random() * 1000) + 100;
+  var y = Math.floor(Math.random() * 500) + 100;
+  io.to(opponentID).emit('reactWithEmoji', emojiType, x, y);
+  io.to(ownID).emit('displayEmoji', emojiType);
+
+});
 // Score Scene
-  socket.on('notifyChattingServer', function (isReady, isHost){
-    if (isReady){
-      chatReady = chatReady + 1 ;
-    }
-    else{
-      chatReady = chatReady - 1 ;
+socket.on('notifyChattingServer', function (isReady, isHost) {
+  if (isReady) {
+    chatReady = chatReady + 1;
+  }
+  else {
+    chatReady = chatReady - 1;
 
-    }
-    if (chatReady == 2){
-      io.in('game').emit('notifyChattingPlayers');
-    }
-  });
+  }
+  if (chatReady == 2) {
+    io.in('game').emit('notifyChattingPlayers');
+  }
+});
 
 //Chat Scene
-  socket.on('sendOpponentMessage', function(text, isHost){
-    console.log(text, isHost)
-    io.in('game').emit('createOpponentMessage', text, isHost);
-  });
+socket.on('sendOpponentMessage', function (text, isHost) {
+  console.log(text, isHost)
+  io.in('game').emit('createOpponentMessage', text, isHost);
+});
 
 });
 
@@ -241,10 +256,10 @@ io.on('connection', function (socket) {
 
 
 
-function getPlayer(socket){
+function getPlayer(socket) {
   for (let i = 0; i < playerList.length; i++) {
     if (String(playerList[i].socketID) === String(socket.id)) {
-      return(playerList[i]);
+      return (playerList[i]);
     }
   }
   return null;

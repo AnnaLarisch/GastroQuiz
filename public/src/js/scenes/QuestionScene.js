@@ -63,6 +63,7 @@ var correctAnswerButtonHere;
 var correctAnswerButton;
 
 var loggedIn = false;
+var answersLogged = false;
 
 
 var htmlElementList = [];
@@ -115,7 +116,7 @@ export default class QuestionScene extends Phaser.Scene {
       answer2Button = new MyDOMElement(self, 665, 500, elementQuestionSceneHTML.getChildByID("answer2Button"), null, ""); 
       answer3Button = new MyDOMElement(self, 260, 620, elementQuestionSceneHTML.getChildByID("answer3Button"), null, ""); 
       answer4Button = new MyDOMElement(self, 665, 620, elementQuestionSceneHTML.getChildByID("answer4Button"), null, ""); 
-      logButton = new MyDOMElement(self, -1050, -585, elementQuestionSceneHTML.getChildByID("logButton"), null, ""); 
+      logButton = new MyDOMElement(self, 1050, 585, elementQuestionSceneHTML.getChildByID("logButton"), null, ""); 
 
       answer1Button.setOrigin(0, 0).addListener('click');
       answer2Button.setOrigin(0, 0).addListener('click');
@@ -141,12 +142,22 @@ export default class QuestionScene extends Phaser.Scene {
       // Question interaction 
       answer1Button.on('click', function (pointer){
         document.getElementById("logButton").disabled = false;
+        document.getElementById("logButton").classList.remove('btn-dark')
+        document.getElementById("logButton").classList.add('btn-outline-dark')
+        socket.emit('loggedAnswerServer', false, Global.isHost);
+        loggedIn = false;
+        answersLogged = false;
         chosenAnswer = shuffleAnswers[0];
         chosenButton = 1;
         setAndClearButtonColor(1, 2, 3, 4);
       });
       answer2Button.on('click', function (pointer){
         document.getElementById("logButton").disabled = false;
+        document.getElementById("logButton").classList.remove('btn-dark')
+        document.getElementById("logButton").classList.add('btn-outline-dark')
+        socket.emit('loggedAnswerServer', false, Global.isHost);
+        loggedIn = false;
+        answersLogged = false;
         chosenAnswer = shuffleAnswers[1];        
         chosenButton = 2;
         setAndClearButtonColor(2, 1, 3, 4);
@@ -154,12 +165,22 @@ export default class QuestionScene extends Phaser.Scene {
       });
       answer3Button.on('click', function (pointer){
         document.getElementById("logButton").disabled = false;
+        document.getElementById("logButton").classList.remove('btn-dark')
+        document.getElementById("logButton").classList.add('btn-outline-dark')
+        socket.emit('loggedAnswerServer', false, Global.isHost);
+        loggedIn = false;
+        answersLogged = false;
         chosenAnswer = shuffleAnswers[2];
         chosenButton = 3;        
         setAndClearButtonColor(3, 1, 2, 4);
       });
       answer4Button.on('click', function (pointer){
         document.getElementById("logButton").disabled = false;
+        document.getElementById("logButton").classList.remove('btn-dark')
+        document.getElementById("logButton").classList.add('btn-outline-dark')
+        socket.emit('loggedAnswerServer', false, Global.isHost);
+        loggedIn = false;
+        answersLogged = false;
         chosenAnswer = shuffleAnswers[3];
         chosenButton = 4;
         setAndClearButtonColor(4, 1, 2, 3);
@@ -172,96 +193,33 @@ export default class QuestionScene extends Phaser.Scene {
           document.getElementById("logButton").classList.add('btn-outline-dark')
         
           loggedIn = false;
-          socket.emit('loggedAnswerServer', loggedIn);
+          socket.emit('loggedAnswerServer', loggedIn, Global.isHost);
 
         }
         else{
           document.getElementById("logButton").classList.remove('btn-outline-dark')
           document.getElementById("logButton").classList.add('btn-dark')
           loggedIn = true;
-          socket.emit('loggedAnswerServer',loggedIn);
+          
+          socket.emit('loggedAnswerServer',loggedIn,  Global.isHost);
 
         }
 
       });
       
-      socket.on('resetIcons'), function(){
+      socket.on('resetIcons', function(){
+        loggedIn = true;
         player1ProfilePopUp.setPosition(-100, -100);
         player2ProfilePopUp.setPosition(-100, -100);
         checkmarkPopUp.setPosition(-100, -100);
         crossPopUp.setPosition(-100, -100);
-      }
+      });
     
-      socket.on('loggedAnswerPlayer'), function(){
-        console.log("Logged in answers lol")
-        loggedIn = false;
-        document.getElementById("progressBarQuestion").style.width = "0px"
-          if (Global.isHost){
-            clearInterval(progressBarInterval);
-          }
-          // If time is up, call to check correct answer
-          checkAnswers();
-          var chosenxpos = 0;
-          var chosenypos = 0;
-          
-          if (chosenButton == 1){ 
-            chosenxpos = 560;
-            chosenypos = 490;
-          }
-          else if (chosenButton == 2){
-            chosenxpos = 965;
-            chosenypos = 490;
-          }
-          else if (chosenButton == 3){
-            chosenxpos = 560;
-            chosenypos = 610;
-          }
-          else if (chosenButton == 4){
-            chosenxpos = 965;
-            chosenypos = 610;
-        
-          }
-          else {
-            chosenxpos = -100;
-            chosenypos= -100;
-          }
-
-          var correctxpos = 0;
-          var correctypos = 0;
-          
-          if (correctAnswerButton == 1){ 
-            correctxpos = 560;
-            correctypos = 490;
-          }
-          else if (correctAnswerButton == 2){
-            correctxpos = 965;
-            correctypos = 490;
-          }
-          else if (correctAnswerButton == 3){
-            correctxpos = 560;
-            correctypos = 610;
-          }
-          else if (correctAnswerButton == 4){
-            correctxpos = 965;
-            correctypos = 610;
-          
-          }
-          if (chosenAnswer == correct_answer){
-        
-        
-            checkmarkPopUp.setPosition(chosenxpos, chosenypos);
-        
-          }
-          else if (chosenAnswer === "NO_ANSWER") {
-            console.log("No answer selected!")
-            checkmarkPopUp.setPosition(correctxpos, correctypos);
-          }
-          else{
-            crossPopUp.setPosition(chosenxpos, chosenypos);
-            checkmarkPopUp.setPosition(correctxpos, correctypos);
-        
-          }
-        }
+      socket.on('loggedAnswerPlayer', function(){
+        console.log("answersLogged:", answersLogged)
+        answersLogged = true;
+        console.log("answersLogged:", answersLogged)
+      });
 
       // Socket Interactions
 
@@ -278,7 +236,11 @@ export default class QuestionScene extends Phaser.Scene {
         answer3Button.setInnerText(shuffleAnswers_s[2]);
         answer4Button.setInnerText(shuffleAnswers_s[3]);
         questionDiv.setInnerText(currentQuestion_s.question);
-        
+        document.getElementById("logButton").classList.remove('btn-dark')
+        document.getElementById("logButton").classList.add('btn-outline-dark')
+        document.getElementById("logButton").disabled = true;
+        loggedIn = false;
+        answersLogged = false;
         document.getElementById("player1IconPopup").style.visibility = "visible";
         document.getElementById("player2IconPopup").style.visibility = "visible";
         document.getElementById("checkmarkIcon").style.visibility = "visible";
@@ -291,13 +253,16 @@ export default class QuestionScene extends Phaser.Scene {
         // Progress Bar size reduction
         if(progressBarWidth >= 0){    
           document.getElementById("progressBarQuestion").style.width = progressBarWidth.toString() +"px"
-        } else {
+        } else if (progressBarWidth < 0 || answersLogged == true) {
+          progressBarWidth = -1
+          console.log("asnwers logged");
           document.getElementById("progressBarQuestion").style.width = "0px"
           if (Global.isHost){
             clearInterval(progressBarInterval);
           }
           // If time is up, call to check correct answer
           checkAnswers();
+          answersLogged = false;
           var chosenxpos = 0;
           var chosenypos = 0;
           
@@ -403,12 +368,12 @@ export default class QuestionScene extends Phaser.Scene {
 
         document.getElementById("logButton").classList.remove('btn-dark')
         document.getElementById("logButton").classList.add('btn-outline-dark')
+        document.getElementById("logButton").disabled = true;
 
         document.getElementById("answer1Button").disabled = false;
         document.getElementById("answer2Button").disabled = false;
         document.getElementById("answer3Button").disabled = false;
         document.getElementById("answer4Button").disabled = false;
-        document.getElementById("logButton").disabled = true;
 
       });
 
@@ -543,12 +508,14 @@ export default class QuestionScene extends Phaser.Scene {
       document.getElementById("answer4Button").classList.add('btn-outline-dark')
       document.getElementById("logButton").classList.remove('btn-dark')
       document.getElementById("logButton").classList.add('btn-outline-dark')
-
+      loggedIn = false;
+      answersLogged = false;
+      
     }
 }
 
 function pickNewQuestion(){
-  
+
   console.log(currentQuestion);
   console.log(questions.questions);
   currentQuestion = chooseQuestion(questions.questions)
@@ -587,7 +554,13 @@ function chooseQuestion(questionList){
 
 function progressBarMovement(progressBarWidth, Interval){
   progressBarInterval = setInterval(function(){
-    progressBarWidth = progressBarWidth - Interval;
+    if (answersLogged){
+      progressBarWidth = -1
+    }
+    else{
+      progressBarWidth = progressBarWidth - Interval;
+
+    }
     socket.emit('moveProgressBarServer', progressBarWidth);
     }, 800);
 }
